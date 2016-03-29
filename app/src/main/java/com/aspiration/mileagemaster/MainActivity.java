@@ -1,5 +1,6 @@
 package com.aspiration.mileagemaster;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -48,5 +49,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void standardCharge(View view) {
+        Intent i = new Intent(this, StandardChargeActivity.class);
+        startActivity(i);
     }
 }

@@ -18,9 +18,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:authorities="com.aspiration.mileagemaster"
-            android:name=".data.TripProvider"/>
+            android:name=".data.TripProvider"
+            android:authorities="com.aspiration.mileagemaster" />
+
+        <activity
+            android:name=".StandardChargeActivity"
+            android:label="@string/title_activity_standard_charge"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
+        <activity
+            android:name=".StandardChargeListActivity"
+            android:label="@string/title_activity_standard_charge_list"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
