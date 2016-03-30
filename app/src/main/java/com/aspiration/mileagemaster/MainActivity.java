@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void standardCharge(View view) {
-        Intent i = new Intent(this, StandardChargeActivity.class);
+        Intent i = new Intent(this, StandardChargeListActivity.class);
         startActivity(i);
     }
 }

@@ -58,6 +58,17 @@ public class TripProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortorder) {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
+            case STANDARD_CHARGE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.StandardChargeEntry.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            }
             case STANDARD_CHARGE_BY_ID: {
                 String id = TripContract.StandardChargeEntry.getIDSettingFromUri(uri);
                 retCursor = mOpenHelper.getReadableDatabase().query(
