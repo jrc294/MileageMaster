@@ -12,4 +12,5 @@
     <string name="dialog_deleted">This will be deleted.</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
+    <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
 </resources>
