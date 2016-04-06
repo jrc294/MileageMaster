@@ -1,6 +1,7 @@
 package com.aspiration.mileagemaster.data;
 
 import android.database.Cursor;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +52,10 @@ public class StandardChargeAdapter extends RecyclerView.Adapter<StandardChargeAd
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         mDataset.moveToPosition(position);
+
+        CardView cv_card_view = (CardView) holder.mView.findViewById(R.id.card_view);
+        cv_card_view.setTag(mDataset.getLong(mDataset.getColumnIndex(TripContract.StandardChargeEntry._ID)));
+
         TextView tvStandardChargeDesc = (TextView) holder.mView.findViewById(R.id.tvStandardChargeDesc);
         //tvStandardChargeDesc.setText(mDataset[position]);
 
@@ -60,11 +65,18 @@ public class StandardChargeAdapter extends RecyclerView.Adapter<StandardChargeAd
         TextView tvStandardChargeCost = (TextView) holder.mView.findViewById(R.id.tvStandardChargeCost);
         String sStandardChargeCost = String.valueOf(mDataset.getFloat(mDataset.getColumnIndex(TripContract.StandardChargeEntry.COLUMN_COST)));
         tvStandardChargeCost.setText(sStandardChargeCost);
+
+
         //tvStandardChargeCost.setText(mDataset[position]);
     }
 
     @Override
     public int getItemCount() {
         return mDataset.getCount();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
     }
 }

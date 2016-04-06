@@ -17,11 +17,13 @@
             android:id="@+id/etChargeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="0"
             android:hint="@string/charge_name"/>
         <EditText
             android:id="@+id/etChargeCost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="clean"
             android:hint="@string/charge_cost"/>
     </LinearLayout>
 </fragment>

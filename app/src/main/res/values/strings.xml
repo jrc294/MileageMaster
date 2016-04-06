@@ -5,4 +5,11 @@
     <string name="charge_name">Description</string>
     <string name="charge_cost">Cost</string>
     <string name="title_activity_standard_charge_list">StandardChargeListActivity</string>
+    <string name="standard_charge_saved">Standard charge saved</string>
+    <string name="standard_charge_deleted">Standard charge deleted</string>
+    <string name="error">Error</string>
+    <string name="delete_item">Delete</string>
+    <string name="dialog_deleted">This will be deleted.</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
 </resources>

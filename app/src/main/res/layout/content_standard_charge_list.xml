@@ -13,6 +13,7 @@
     tools:showIn="@layout/activity_standard_charge_list">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
+        android:tag=""
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

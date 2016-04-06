@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.UnknownFormatConversionException;
 
@@ -96,7 +95,7 @@ public class TripProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        //retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
 
@@ -110,9 +109,6 @@ public class TripProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        if (db.isReadOnly()) {
-            Log.d(LOG_TAG, "db is readonly");
-        }
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
@@ -138,17 +134,46 @@ public class TripProvider extends ContentProvider {
             default:
                 throw new UnknownFormatConversionException("Unknown uri: " + uri);
         }
-        //getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri,null);
         return returnUri;
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted = 0;
+
+        switch (match) {
+            case STANDARD_CHARGE: {
+                rowsDeleted = db.delete(TripContract.StandardChargeEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            default:
+                throw new UnknownFormatConversionException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri,null);
+        return rowsDeleted;
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated = 0;
+
+        switch (match) {
+            case STANDARD_CHARGE:
+                try {
+                    rowsUpdated = db.update(TripContract.StandardChargeEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri,null);
+        return rowsUpdated;
     }
 }
