@@ -41,6 +41,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aspiration.mileagemaster.MainActivity" />
         </activity>
+        <activity
+            android:name=".ClientActivity"
+            android:label="@string/title_activity_client"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ClientListActivity"
+            android:label="@string/title_activity_client_list"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

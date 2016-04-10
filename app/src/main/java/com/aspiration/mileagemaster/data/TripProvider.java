@@ -80,6 +80,17 @@ public class TripProvider extends ContentProvider {
                         null);
                 break;
             }
+            case CLIENT: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.ClientEntry.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            }
             case CLIENT_BY_ID: {
                 String id = TripContract.ClientEntry.getIDSettingFromUri(uri);
                 retCursor = mOpenHelper.getReadableDatabase().query(

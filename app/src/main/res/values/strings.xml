@@ -13,4 +13,8 @@
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
+    <string name="title_activity_client">ClientActivity</string>
+    <string name="title_activity_client_list">ClientListActivity</string>
+    <string name="tax_percent">Tax %</string>
+    <string name="client_activity_enter_the_default_charge">Enter any default charges here</string>
 </resources>
