@@ -24,12 +24,18 @@ public class TripProvider extends ContentProvider {
     private static final int STANDARD_CHARGE_BY_ID = 101;
     private static final int CLIENT = 110;
     private static final int CLIENT_BY_ID = 111;
+    private static final int CLIENT_USING_STANDARD_CHARGE_ID = 112;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // _id = ?
     private static final String sStandardChargeID = TripContract.StandardChargeEntry._ID + " = ? ";
 
     private static final String sClientId = TripContract.ClientEntry._ID + " = ? ";
+
+    private static final String sStandardChargeIDs = TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID + " = ? OR " +
+                                                    TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID + " = ? OR " +
+                                                    TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID + " = ? ";
+
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -39,6 +45,7 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.StandardChargeEntry.PATH_STANDARD_CHARGE + "/#", STANDARD_CHARGE_BY_ID);
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT, CLIENT);
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/#", CLIENT_BY_ID);
+        matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/*" + "/#", CLIENT_USING_STANDARD_CHARGE_ID);
         //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_BY_ID);
         //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_CATEGORY);
 
@@ -103,6 +110,18 @@ public class TripProvider extends ContentProvider {
                         null);
                 break;
             }
+            case CLIENT_USING_STANDARD_CHARGE_ID: {
+                String id = TripContract.ClientEntry.getZZZ(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.ClientEntry.TABLE_NAME,
+                        projection,
+                        sStandardChargeIDs,
+                        new String[]{id,id,id},
+                        null,
+                        null,
+                        null);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -160,6 +179,10 @@ public class TripProvider extends ContentProvider {
                 rowsDeleted = db.delete(TripContract.StandardChargeEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
+            case CLIENT: {
+                rowsDeleted = db.delete(TripContract.ClientEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
             default:
                 throw new UnknownFormatConversionException("Unknown uri: " + uri);
         }
@@ -177,6 +200,13 @@ public class TripProvider extends ContentProvider {
             case STANDARD_CHARGE:
                 try {
                     rowsUpdated = db.update(TripContract.StandardChargeEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case CLIENT:
+                try {
+                    rowsUpdated = db.update(TripContract.ClientEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -1,28 +1,18 @@
 package com.aspiration.mileagemaster;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.aspiration.mileagemaster.data.StandardListAdapter;
-import com.aspiration.mileagemaster.data.TripContract;
+public class StandardChargeListActivity extends AppCompatActivity {
 
-public class StandardChargeListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final int TRIP_LOADER = 0;
-    private RecyclerView mRecyclerView;
-    private StandardListAdapter mAdapter;
     public static final String KEY_ID = "id";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +20,6 @@ public class StandardChargeListActivity extends AppCompatActivity implements Loa
         setContentView(R.layout.activity_standard_charge_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // Initialize recycler view
-        mRecyclerView = (RecyclerView) findViewById(R.id.standard_charge_list_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +30,15 @@ public class StandardChargeListActivity extends AppCompatActivity implements Loa
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getSupportLoaderManager().initLoader(TRIP_LOADER, null, this);
+        if (savedInstanceState == null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            StandardChargeListActivityFragment fragment = new StandardChargeListActivityFragment();
+            fragmentTransaction.add(R.id.standard_charge_list_container, fragment);
+            fragmentTransaction.commit();
+        }
+
     }
 
     public void startActivity(View view) {
@@ -56,25 +49,4 @@ public class StandardChargeListActivity extends AppCompatActivity implements Loa
         startActivity(i);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = TripContract.StandardChargeEntry.CONTENT_URI;
-        return new CursorLoader(this,
-                uri,
-                new String[]{TripContract.StandardChargeEntry._ID,
-                        TripContract.StandardChargeEntry.COLUMN_NAME,
-                        TripContract.StandardChargeEntry.COLUMN_COST},null,null,null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data.getCount() > 0) {
-            mRecyclerView.setAdapter(new StandardListAdapter(data));
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mRecyclerView.setAdapter(null);
-    }
 }

@@ -40,16 +40,29 @@ public class TripContract {
 
         public static final String PATH_CLIENT = "client";
 
+        public static final String PATH_CLIENT_STANDARD_CHARGE = "client_standard_charge";
+
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CLIENT).build();
+
+        public static final Uri CONTENT_STANDARD_CHARGE_CHECK_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CLIENT).appendPath(PATH_CLIENT_STANDARD_CHARGE).build();
 
         // Method to build a Uri for querying an individual standard charge back
         public static Uri buildClientById(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static Uri buildClientStandardChargeCheckById(long id) {
+            return ContentUris.withAppendedId(CONTENT_STANDARD_CHARGE_CHECK_URI, id);
+        }
+
         // Method to return the ID of the movie from the Uri
         public static String getIDSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
+        }
+
+        // Method to return the ID of a standard charge being used by a client
+        public static String getZZZ(Uri uri) {
+            return uri.getPathSegments().get(2);
         }
     }
 

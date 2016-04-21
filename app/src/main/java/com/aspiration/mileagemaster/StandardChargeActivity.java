@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -79,14 +77,6 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
             }
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -154,8 +144,10 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.delete_item:
-                DeleteDialogFragment confirmFragment = new DeleteDialogFragment();
-                confirmFragment.show(getSupportFragmentManager(),"confirm");
+                if (deleteOk()) {
+                    DeleteDialogFragment confirmFragment = new DeleteDialogFragment();
+                    confirmFragment.show(getSupportFragmentManager(), "confirm");
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -170,6 +162,19 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
         if (mId != null) {
             outState.putLong(INITIAL_ID, mId);
         }
+    }
+
+    private boolean deleteOk() {
+        Cursor c = getContentResolver().query(TripContract.ClientEntry.buildClientStandardChargeCheckById(mId),
+                new String[] {TripContract.ClientEntry.COLUMN_NAME},
+                null,null,null,null);
+        if (c.moveToFirst()) {
+            String name = c.getString(c.getColumnIndex(TripContract.ClientEntry.COLUMN_NAME));
+            Toast.makeText(this, String.format(getResources().getString(R.string.standard_charge_is_in_use), name), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        c.close();
+        return true;
     }
 
 }

@@ -6,15 +6,19 @@
     <string name="charge_cost">Cost</string>
     <string name="title_activity_standard_charge_list">StandardChargeListActivity</string>
     <string name="standard_charge_saved">Standard charge saved</string>
+    <string name="client_saved">Client saved</string>
     <string name="standard_charge_deleted">Standard charge deleted</string>
+    <string name="client_deleted">Client deleted</string>
     <string name="error">Error</string>
     <string name="delete_item">Delete</string>
     <string name="dialog_deleted">This will be deleted.</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
+    <string name="client_not_saved">Client not saved because the name is empty</string>
     <string name="title_activity_client">ClientActivity</string>
     <string name="title_activity_client_list">ClientListActivity</string>
     <string name="tax_percent">Tax %</string>
     <string name="client_activity_enter_the_default_charge">Enter any default charges here</string>
+    <string name="standard_charge_is_in_use">Delete failed as the charge is being used by %1$s</string>
 </resources>

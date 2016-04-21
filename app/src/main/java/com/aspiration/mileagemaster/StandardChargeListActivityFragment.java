@@ -17,25 +17,25 @@ import com.aspiration.mileagemaster.data.StandardListAdapter;
 import com.aspiration.mileagemaster.data.TripContract;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Created by jonathan.cook on 4/18/2016.
  */
-public class ClientListActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StandardChargeListActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int TRIP_LOADER = 0;
     RecyclerView mRecyclerView;
-    private static final int CLIENT_LOADER = 1;
     public static final String KEY_ID = "id";
 
-    public ClientListActivityFragment() {
+    public StandardChargeListActivityFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_client_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_standard_charge_list, container, false);
 
         // Initialize recycler view
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.client_list_recycler_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.standard_charge_list_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -44,18 +44,18 @@ public class ClientListActivityFragment extends Fragment implements LoaderManage
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getActivity().getSupportLoaderManager().initLoader(CLIENT_LOADER, null, this);
+        getActivity().getSupportLoaderManager().initLoader(TRIP_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = TripContract.ClientEntry.CONTENT_URI;
+        Uri uri = TripContract.StandardChargeEntry.CONTENT_URI;
         return new CursorLoader(getActivity(),
                 uri,
-                new String[]{TripContract.ClientEntry._ID,
-                        TripContract.ClientEntry.COLUMN_NAME,
-                        TripContract.ClientEntry.COLUMN_PRICE_PER_MILE},null,null,null);
+                new String[]{TripContract.StandardChargeEntry._ID,
+                        TripContract.StandardChargeEntry.COLUMN_NAME,
+                        TripContract.StandardChargeEntry.COLUMN_COST},null,null,null);
     }
 
     @Override
@@ -63,12 +63,11 @@ public class ClientListActivityFragment extends Fragment implements LoaderManage
         if (data.getCount() > 0) {
             mRecyclerView.setAdapter(new StandardListAdapter(data));
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
     }
-
-
 }
