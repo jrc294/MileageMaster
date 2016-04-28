@@ -25,6 +25,7 @@ public class TripProvider extends ContentProvider {
     private static final int CLIENT = 110;
     private static final int CLIENT_BY_ID = 111;
     private static final int CLIENT_USING_STANDARD_CHARGE_ID = 112;
+    private static final int TRIP = 120;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // _id = ?
@@ -46,7 +47,7 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT, CLIENT);
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/#", CLIENT_BY_ID);
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/*" + "/#", CLIENT_USING_STANDARD_CHARGE_ID);
-        //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_BY_ID);
+        matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP, TRIP);
         //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_CATEGORY);
 
         return matcher;
@@ -154,8 +155,17 @@ public class TripProvider extends ContentProvider {
             }
             case CLIENT: {
                 long _id = db.insert(TripContract.ClientEntry.TABLE_NAME, null, values);
-                if ( _id > 0) {
+                if (_id > 0) {
                     returnUri = TripContract.ClientEntry.buildClientById(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            }
+            case TRIP: {
+                long _id = db.insert(TripContract.TripEntry.TABLE_NAME, null, values);
+                if ( _id > 0) {
+                    returnUri = TripContract.TripEntry.buildTripById(_id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }

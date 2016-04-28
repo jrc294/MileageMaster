@@ -27,6 +27,20 @@ public class TripContract {
         public static final String COLUMN_COST = "cost";
         public static final String COLUMN_COMPLETE = "complete";
         public static final String COLUMN_NOTES = "notes";
+
+        public static final String PATH_TRIP = "trip";
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
+
+        // Method to build a Uri for querying an individual trip back
+        public static Uri buildTripById(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        // Method to return the ID of the trip from the Uri
+        public static String getIDSettingFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
     }
 
     public static final class ClientEntry implements BaseColumns {

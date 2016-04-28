@@ -1,6 +1,7 @@
 package com.aspiration.mileagemaster;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -14,16 +15,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
     public static final String KEY_ID = "id";
 
-    public enum Tab {CLIENTS, CHARGES};
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
-    Tab mCurrent_tab = Tab.CLIENTS;
+    }
+
+    public enum Tab {CLIENTS, CHARGES, HOME, MY_TRIPS};
+
+    Tab mCurrent_tab = Tab.HOME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.addTab(tabLayout.newTab().setText("HOME"));
         tabLayout.addTab(tabLayout.newTab().setText("CLIENTS"));
         tabLayout.addTab(tabLayout.newTab().setText("CHARGES"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -86,11 +93,14 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    ClientListActivityFragment tab1 = new ClientListActivityFragment();
+                    HomeFragment tab1 = HomeFragment.newInstance(null,null);
                     return tab1;
                 case 1:
-                    StandardChargeListActivityFragment tab2 = new StandardChargeListActivityFragment();
+                    ClientListActivityFragment tab2 = new ClientListActivityFragment();
                     return tab2;
+                case 2:
+                    StandardChargeListActivityFragment tab3 = new StandardChargeListActivityFragment();
+                    return tab3;
                 default:
                     return null;
             }
@@ -127,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
     public void startActivity(View view) {
         Intent i = null;
         switch (mCurrent_tab) {
+            case HOME : i = new Intent(this, TripActivity.class);break;
+            case MY_TRIPS: i = new Intent(this, TripActivity.class);break;
             case CLIENTS : i = new Intent(this, ClientActivity.class); break;
             case CHARGES : i = new Intent(this, StandardChargeActivity.class); break;
         }
@@ -138,8 +150,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setCurrentTab(int current_tab) {
         switch (current_tab) {
-            case 0 : mCurrent_tab = Tab.CLIENTS; break;
-            case 1 : mCurrent_tab = Tab.CHARGES; break;
+            case 0 : mCurrent_tab = Tab.HOME; break;
+            case 1 : mCurrent_tab = Tab.MY_TRIPS; break;
+            case 2 : mCurrent_tab = Tab.CLIENTS; break;
+            case 3 : mCurrent_tab = Tab.CHARGES; break;
         }
     }
 

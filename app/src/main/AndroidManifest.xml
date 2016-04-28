@@ -59,6 +59,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aspiration.mileagemaster.MainActivity" />
         </activity>
+        <activity
+            android:name=".TripActivity"
+            android:label="@string/title_activity_trip"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
+        <activity
+            android:name=".TripListActivityFragment"
+            android:label="@string/title_activity_trip_list_activity_fragment"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aspiration.mileagemaster.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

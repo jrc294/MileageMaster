@@ -17,14 +17,14 @@ import static com.aspiration.mileagemaster.data.TripContract.TripEntry;
  */
 public class TripDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION =6;
+    private static final int DATABASE_VERSION =7;
 
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     //
     //
-    //public static final String DATABASE_NAME = "mileagemaster.db";
-    public static final String DATABASE_NAME = "/storage/emulated/legacy/Android/data/com.aspiration.mileagemaster/mileagemaster.db";
+    public static final String DATABASE_NAME = "mileagemaster.db";
+    //public static final String DATABASE_NAME = "/storage/emulated/legacy/Android/data/com.aspiration.mileagemaster/mileagemaster.db";
 
     public TripDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
