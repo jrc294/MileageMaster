@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("HOME"));
+        tabLayout.addTab(tabLayout.newTab().setText("TRIPS"));
         tabLayout.addTab(tabLayout.newTab().setText("CLIENTS"));
         tabLayout.addTab(tabLayout.newTab().setText("CHARGES"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -96,11 +97,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     HomeFragment tab1 = HomeFragment.newInstance(null,null);
                     return tab1;
                 case 1:
-                    ClientListActivityFragment tab2 = new ClientListActivityFragment();
+                    TripListActivityFragment tab2 = new TripListActivityFragment();
                     return tab2;
                 case 2:
-                    StandardChargeListActivityFragment tab3 = new StandardChargeListActivityFragment();
+                    ClientListActivityFragment tab3 = new ClientListActivityFragment();
                     return tab3;
+                case 3:
+                    StandardChargeListActivityFragment tab4 = new StandardChargeListActivityFragment();
+                    return tab4;
                 default:
                     return null;
             }

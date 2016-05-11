@@ -17,11 +17,12 @@ import java.util.Locale;
 /**
  * Created by jonathan.cook on 3/29/2016.
  */
-public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapter.ViewHolder> {
+public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.ViewHolder> {
 
-    private static final String LOG_TAG = StandardListAdapter.class.getSimpleName();
+    private static final String LOG_TAG = ClientListAdapter.class.getSimpleName();
 
     private Cursor mDataset;
+    Context mContext;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View mView;
@@ -32,12 +33,13 @@ public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public StandardListAdapter(Cursor myDataset) {
+    public ClientListAdapter(Cursor myDataset, Context context) {
         mDataset = myDataset;
+        mContext = context;
     }
 
     @Override
-    public StandardListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ClientListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
@@ -47,7 +49,7 @@ public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapte
     }
 
     @Override
-    public void onBindViewHolder(StandardListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ClientListAdapter.ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         mDataset.moveToPosition(position);
@@ -62,10 +64,9 @@ public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapte
         tvStandardChargeDesc.setText(sStandardChargeDesc);
 
         TextView tvStandardChargeCost = (TextView) holder.mView.findViewById(R.id.tvStandardChargeCost);
-
-        String sStandardChargeCost = String.format("%s%.2f", Currency.getInstance(Locale.getDefault()).getSymbol(), mDataset.getFloat(2));
-
-        tvStandardChargeCost.setText(sStandardChargeCost);
+        String sClientMileageCost = String.format("%s %s%.2f, %s %.2f%s", mContext.getResources().getString(R.string.charge_cost), Currency.getInstance(Locale.getDefault()).getSymbol(), mDataset.getFloat(2),
+                mContext.getResources().getString(R.string.tax), mDataset.getFloat(3), "%");
+        tvStandardChargeCost.setText(sClientMileageCost);
     }
 
     @Override

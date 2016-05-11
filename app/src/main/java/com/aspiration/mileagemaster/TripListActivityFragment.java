@@ -1,30 +1,73 @@
 package com.aspiration.mileagemaster;
 
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
-public class TripListActivityFragment extends AppCompatActivity {
+import com.aspiration.mileagemaster.data.StandardListAdapter;
+import com.aspiration.mileagemaster.data.TripContract;
+import com.aspiration.mileagemaster.data.TripListAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trip_list_activity_fragment);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+/**
+ * A placeholder fragment containing a simple view.
+ */
+public class TripListActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    RecyclerView mRecyclerView;
+    private static final int TRIP_LOADER = 2;
+    public static final String KEY_ID = "id";
+
+    public TripListActivityFragment() {
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_trip_list, container, false);
+
+        // Initialize recycler view
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.trip_list_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        return rootView;
+
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getActivity().getSupportLoaderManager().initLoader(TRIP_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri uri = TripContract.TripEntry.CONTENT_URI;
+        return new CursorLoader(getActivity(),
+                uri,
+                new String[]{TripContract.TripEntry._ID,
+                        TripContract.TripEntry.COLUMN_DESCRIPTION},null,null,null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data.getCount() > 0) {
+            mRecyclerView.setAdapter(new TripListAdapter(data));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mRecyclerView.setAdapter(null);
+    }
 }

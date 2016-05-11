@@ -13,16 +13,30 @@
         android:paddingLeft="@dimen/activity_horizontal_margin_wide"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:layout_height="match_parent">
+        <TextView
+            android:paddingTop="12dp"
+            android:paddingLeft="4dp"
+            android:layout_width="wrap_content"
+            android:text="Name"
+            android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/etChargeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/charge_name"/>
+        <TextView
+            android:paddingTop="12dp"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:layout_width="wrap_content"
+            android:text="@string/charge_cost"
+            android:layout_height="wrap_content" />
         <com.aspiration.mileagemaster.EditTextCurrency
             android:id="@+id/etChargeCost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="@string/charge_cost"/>
+            android:hint="@string/zero_amount"/>
     </LinearLayout>
 </fragment>

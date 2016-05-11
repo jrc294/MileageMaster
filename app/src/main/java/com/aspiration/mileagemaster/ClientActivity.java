@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class ClientActivity extends AppCompatActivity implements DeleteDialogFragment.NoticeDialogListener {
 
@@ -54,8 +55,14 @@ public class ClientActivity extends AppCompatActivity implements DeleteDialogFra
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.delete_item:
-                DeleteDialogFragment confirmFragment = new DeleteDialogFragment();
-                confirmFragment.show(getSupportFragmentManager(),"confirm");
+                BackFragment back_fragment = (BackFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+                if (back_fragment.getItemId() > 1) {
+                    DeleteDialogFragment confirmFragment = new DeleteDialogFragment();
+                    confirmFragment.show(getSupportFragmentManager(), "confirm");
+                } else {
+                    Toast.makeText(this, getString(R.string.cannot_delete), Toast.LENGTH_SHORT).show();
+                }
+
             default:
                 return super.onOptionsItemSelected(item);
         }

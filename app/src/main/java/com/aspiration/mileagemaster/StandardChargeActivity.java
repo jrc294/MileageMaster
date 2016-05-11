@@ -44,15 +44,6 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
         mName = (EditText) findViewById(R.id.etChargeName);
         mCost = (EditTextCurrency) findViewById(R.id.etChargeCost);
 
-        mCost.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus == false) {
-                    mCost.formatCharge(true);
-                }
-            }
-        });
-
         mId = getIntent().getExtras() != null ? getIntent().getExtras().getLong(StandardChargeListActivity.KEY_ID) : null;
         if (mId != null) {
             Cursor cursor = getContentResolver().query(TripContract.StandardChargeEntry.buildStandardChargeById(mId) ,
@@ -64,7 +55,7 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
             cursor.moveToFirst();
             mName.setText(cursor.getString(cursor.getColumnIndex(TripContract.StandardChargeEntry.COLUMN_NAME)));
             mCost.setText(String.valueOf(cursor.getFloat(cursor.getColumnIndex(TripContract.StandardChargeEntry.COLUMN_COST))));
-            mCost.formatCharge(true);
+            mCost.formatAmount();
             cursor.close();
 
             if (savedInstanceState != null) {
@@ -83,10 +74,10 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
     @Override
     public void onBackPressed() {
         // Insert on back press
+        mCost.formatAmount();
         if (!mName.getText().toString().equals(mInitName) || !mCost.getText().toString().equals(mInitCost)) {
             if (mId == null && !mName.getText().toString().equals("") && !mCost.getText().toString().equals("")) {
                 // Save new charge
-                mCost.formatCharge(true);
                 ContentValues cv = new ContentValues();
                 cv.put(TripContract.StandardChargeEntry.COLUMN_NAME, mName.getText().toString());
                 cv.put(TripContract.StandardChargeEntry.COLUMN_COST, mCost.getValue());
@@ -98,7 +89,7 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
                 }
             } else if (mId != null && !mName.getText().toString().equals("") && !mCost.getText().toString().equals("")) {
                 // Update on back press
-                mCost.formatCharge(true);
+
                 ContentValues cv = new ContentValues();
                 cv.put(TripContract.StandardChargeEntry.COLUMN_NAME, mName.getText().toString());
                 cv.put(TripContract.StandardChargeEntry.COLUMN_COST, mCost.getValue());

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.aspiration.mileagemaster.MainActivityFragment;
+import com.aspiration.mileagemaster.R;
 
 import static com.aspiration.mileagemaster.data.TripContract.ClientEntry;
 import static com.aspiration.mileagemaster.data.TripContract.StandardChargeEntry;
@@ -17,7 +18,7 @@ import static com.aspiration.mileagemaster.data.TripContract.TripEntry;
  */
 public class TripDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION =7;
+    private static final int DATABASE_VERSION =15;
 
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
@@ -26,8 +27,11 @@ public class TripDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "mileagemaster.db";
     //public static final String DATABASE_NAME = "/storage/emulated/legacy/Android/data/com.aspiration.mileagemaster/mileagemaster.db";
 
+    Context mContext;
+
     public TripDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -78,7 +82,8 @@ public class TripDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CLIENT_TABLE);
         db.execSQL(SQL_CREATE_TRIP_TABLE);
         db.execSQL(SQL_CREATE_TRIP_CHARGE_TABLE);
-        db.execSQL("insert into standard_charge (name, cost) values ('** Not Set **',0)");
+        db.execSQL("insert into " + StandardChargeEntry.TABLE_NAME + " (" + StandardChargeEntry.COLUMN_NAME + ", " + StandardChargeEntry.COLUMN_COST + ") values ('" + mContext.getString(R.string.notset) + "',0)");
+        db.execSQL("insert into " + ClientEntry.TABLE_NAME + " (" + ClientEntry.COLUMN_NAME + ", " + ClientEntry.COLUMN_PRICE_PER_MILE + ", " + ClientEntry.COLUMN_TAX_RATE + ") values ('" + mContext.getString(R.string.myself) + "',0,0)");
     }
 
     @Override
@@ -88,5 +93,6 @@ public class TripDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TripEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ClientEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + StandardChargeEntry.TABLE_NAME);
+        onCreate(db);
     }
 }

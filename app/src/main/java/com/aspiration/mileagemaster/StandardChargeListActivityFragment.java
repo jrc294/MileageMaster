@@ -55,7 +55,7 @@ public class StandardChargeListActivityFragment extends Fragment implements Load
                 uri,
                 new String[]{TripContract.StandardChargeEntry._ID,
                         TripContract.StandardChargeEntry.COLUMN_NAME,
-                        TripContract.StandardChargeEntry.COLUMN_COST},null,null,null);
+                        TripContract.StandardChargeEntry.COLUMN_COST},TripContract.StandardChargeEntry._ID + " > ?",new String[]{"1"},null);
     }
 
     @Override

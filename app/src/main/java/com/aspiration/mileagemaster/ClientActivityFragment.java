@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.aspiration.mileagemaster.data.TripContract;
 import com.aspiration.mileagemaster.data.Util;
 
+import java.text.NumberFormat;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -29,7 +31,7 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     Spinner mCharge3;
     Long mId;
     EditText mName;
-    EditText mCostPerMile;
+    EditTextCurrency mCostPerMile;
     EditText mTaxRate;
 
     private static final String INITIAL_NAME = "initial_name";
@@ -65,8 +67,18 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
         mCharge2 = (Spinner) viewroot.findViewById(R.id.spStandardCharge2);
         mCharge3 = (Spinner) viewroot.findViewById(R.id.spStandardCharge3);
         mName = (EditText) viewroot.findViewById(R.id.etClientName);
-        mCostPerMile = (EditText) viewroot.findViewById(R.id.etClientMileageCost);
+        mCostPerMile = (EditTextCurrency) viewroot.findViewById(R.id.etClientMileageCost);
         mTaxRate = (EditText) viewroot.findViewById(R.id.etTaxRate);
+
+        mTaxRate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    formatTax();
+                }
+            }
+        });
+
 
         String[] fromColumns = new String[]{TripContract.StandardChargeEntry.COLUMN_NAME};
         int[] toViews = new int[]{android.R.id.text1};
@@ -115,6 +127,8 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
                 mInitCharge3 = mCharge3.getSelectedItemId();
                 mInitTaxRate = mTaxRate.getText().toString();
             }
+            formatTax();
+            mCostPerMile.formatAmount();
         }
 
         return viewroot;
@@ -123,6 +137,7 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
 
     @Override
     public void backPressed() {
+        formatTax();
         // Insert on back press
         if (!mName.getText().toString().equals(mInitName) || !mCostPerMile.getText().toString().equals(mInitCostPerMile) || !mTaxRate.getText().toString().equals(mInitTaxRate) || mCharge1.getSelectedItemId() != mInitCharge1  || mCharge2.getSelectedItemId() != mInitCharge2  || mCharge3.getSelectedItemId() != mInitCharge3) {
             if (mId == null && !mName.getText().toString().equals("") && !mCostPerMile.getText().toString().equals("")  && !mTaxRate.getText().toString().equals("")) {
@@ -130,8 +145,8 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
                 //mCostPerMile.formatCharge(true);
                 ContentValues cv = new ContentValues();
                 cv.put(TripContract.ClientEntry.COLUMN_NAME, mName.getText().toString());
-                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, Float.parseFloat(mCostPerMile.getText().toString()));
-                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString()));
+                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, mCostPerMile.getValue());
+                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString().replace("%","")));
                 Uri uri = getActivity().getContentResolver().insert(TripContract.ClientEntry.CONTENT_URI, cv);
                 if (!TripContract.ClientEntry.getIDSettingFromUri(uri).equals(-1)) {
                     Toast.makeText(getActivity(), getString(R.string.client_saved), Toast.LENGTH_SHORT).show();
@@ -143,8 +158,8 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
                 //mCost.formatCharge(true);
                 ContentValues cv = new ContentValues();
                 cv.put(TripContract.ClientEntry.COLUMN_NAME, mName.getText().toString());
-                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, Float.parseFloat(mCostPerMile.getText().toString()));
-                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString()));
+                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, mCostPerMile.getValue());
+                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString().replace("%","")));
                 cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID, (int) mCharge1.getSelectedItemId());
                 cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID, (int) mCharge2.getSelectedItemId());
                 cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID, (int) mCharge3.getSelectedItemId());
@@ -172,6 +187,11 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     }
 
     @Override
+    public Long getItemId() {
+        return mId;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Store the movie stores
@@ -184,5 +204,15 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
         if (mId != null) {
             outState.putLong(INITIAL_ID, mId);
         }
+    }
+
+    private void formatTax() {
+        if (mTaxRate.getText().toString().length() == 0) {
+            mTaxRate.setText("0");
+        }
+        NumberFormat fmt = NumberFormat.getPercentInstance();
+        fmt.setMinimumFractionDigits(2);
+        fmt.setMaximumFractionDigits(2);
+        mTaxRate.setText(fmt.format(Float.parseFloat(mTaxRate.getText().toString().replace("%","")) / 100).toString());
     }
 }

@@ -1,6 +1,5 @@
 package com.aspiration.mileagemaster.data;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,13 +10,10 @@ import android.widget.TextView;
 
 import com.aspiration.mileagemaster.R;
 
-import java.util.Currency;
-import java.util.Locale;
-
 /**
- * Created by jonathan.cook on 3/29/2016.
+ * Created by jonathan.cook on 4/28/2016.
  */
-public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapter.ViewHolder> {
+public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHolder>{
 
     private static final String LOG_TAG = StandardListAdapter.class.getSimpleName();
 
@@ -31,42 +27,35 @@ public class StandardListAdapter extends RecyclerView.Adapter<StandardListAdapte
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public StandardListAdapter(Cursor myDataset) {
+    public TripListAdapter(Cursor myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public StandardListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TripListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item, parent, false);
+                .inflate(R.layout.list_item_trip, parent, false);
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(StandardListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         mDataset.moveToPosition(position);
 
-        CardView cv_card_view = (CardView) holder.mView.findViewById(R.id.card_view);
+        CardView cv_card_view = (CardView) holder.mView.findViewById(R.id.card_view_trip);
         cv_card_view.setTag(mDataset.getLong(0));
 
-        TextView tvStandardChargeDesc = (TextView) holder.mView.findViewById(R.id.tvStandardChargeDesc);
-        //tvStandardChargeDesc.setText(mDataset[position]);
+        TextView tvTripDetails = (TextView) holder.mView.findViewById(R.id.tvTripDetails);
+        String sDescription = mDataset.getString(1);
+        tvTripDetails.setText(sDescription);
 
-        String sStandardChargeDesc = mDataset.getString(1);
-        tvStandardChargeDesc.setText(sStandardChargeDesc);
-
-        TextView tvStandardChargeCost = (TextView) holder.mView.findViewById(R.id.tvStandardChargeCost);
-
-        String sStandardChargeCost = String.format("%s%.2f", Currency.getInstance(Locale.getDefault()).getSymbol(), mDataset.getFloat(2));
-
-        tvStandardChargeCost.setText(sStandardChargeCost);
     }
+
 
     @Override
     public int getItemCount() {

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aspiration.mileagemaster.data.ClientListAdapter;
 import com.aspiration.mileagemaster.data.StandardListAdapter;
 import com.aspiration.mileagemaster.data.TripContract;
 
@@ -55,13 +56,14 @@ public class ClientListActivityFragment extends Fragment implements LoaderManage
                 uri,
                 new String[]{TripContract.ClientEntry._ID,
                         TripContract.ClientEntry.COLUMN_NAME,
-                        TripContract.ClientEntry.COLUMN_PRICE_PER_MILE},null,null,null);
+                        TripContract.ClientEntry.COLUMN_PRICE_PER_MILE,
+                        TripContract.ClientEntry.COLUMN_TAX_RATE},null,null,null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data.getCount() > 0) {
-            mRecyclerView.setAdapter(new StandardListAdapter(data));
+            mRecyclerView.setAdapter(new ClientListAdapter(data, getContext()));
         }
     }
 

@@ -7,7 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class ClientListActivity extends AppCompatActivity {
 
@@ -43,6 +45,7 @@ public class ClientListActivity extends AppCompatActivity {
         Intent i = new Intent(this, ClientActivity.class);
         if (view.getTag() != null) {
             i.putExtra(KEY_ID, (Long) view.getTag());
+            Log.d("MYTAG",view.getTag().toString());
         }
         startActivity(i);
     }

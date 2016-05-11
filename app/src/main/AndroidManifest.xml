@@ -69,7 +69,7 @@
                 android:value="com.aspiration.mileagemaster.MainActivity" />
         </activity>
         <activity
-            android:name=".TripListActivityFragment"
+            android:name=".TripListActivity"
             android:label="@string/title_activity_trip_list_activity_fragment"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

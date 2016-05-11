@@ -26,12 +26,19 @@ public class TripProvider extends ContentProvider {
     private static final int CLIENT_BY_ID = 111;
     private static final int CLIENT_USING_STANDARD_CHARGE_ID = 112;
     private static final int TRIP = 120;
+    private static final int TRIP_BY_ID = 121;
+    private static final int CHARGE_ENTRY = 130;
+    private static final int CHARGE_ENTRY_BY_ID = 131;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // _id = ?
     private static final String sStandardChargeID = TripContract.StandardChargeEntry._ID + " = ? ";
 
     private static final String sClientId = TripContract.ClientEntry._ID + " = ? ";
+
+    private static final String sTripId = TripContract.TripEntry._ID + " = ? ";
+
+    private static final String sTripChargeId = TripContract.TripChargeEntry.COLUMN_TRIP_ID + " = ? ";
 
     private static final String sStandardChargeIDs = TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID + " = ? OR " +
                                                     TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID + " = ? OR " +
@@ -48,6 +55,9 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/#", CLIENT_BY_ID);
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/*" + "/#", CLIENT_USING_STANDARD_CHARGE_ID);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP, TRIP);
+        matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/#", TRIP_BY_ID);
+        matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY, CHARGE_ENTRY);
+        matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/#", CHARGE_ENTRY_BY_ID);
         //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_CATEGORY);
 
         return matcher;
@@ -69,8 +79,8 @@ public class TripProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         TripContract.StandardChargeEntry.TABLE_NAME,
                         projection,
-                        null,
-                        null,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
                         null);
@@ -112,12 +122,47 @@ public class TripProvider extends ContentProvider {
                 break;
             }
             case CLIENT_USING_STANDARD_CHARGE_ID: {
-                String id = TripContract.ClientEntry.getZZZ(uri);
+                String id = TripContract.ClientEntry.getStandardChargeFromClient(uri);
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         TripContract.ClientEntry.TABLE_NAME,
                         projection,
                         sStandardChargeIDs,
                         new String[]{id,id,id},
+                        null,
+                        null,
+                        null);
+                break;
+            }
+            case TRIP: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripEntry.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            }
+            case TRIP_BY_ID: {
+                String id = TripContract.TripEntry.getIDSettingFromUri(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripEntry.TABLE_NAME,
+                        projection,
+                        sTripId,
+                        new String[]{id},
+                        null,
+                        null,
+                        null);
+                break;
+            }
+            case CHARGE_ENTRY_BY_ID: {
+                String id = TripContract.TripChargeEntry.getIDSettingFromUri(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripChargeEntry.TABLE_NAME,
+                        projection,
+                        sTripChargeId,
+                        new String[]{id},
                         null,
                         null,
                         null);
@@ -148,6 +193,15 @@ public class TripProvider extends ContentProvider {
                 long _id = db.insert(TripContract.StandardChargeEntry.TABLE_NAME, null, values);
                 if ( _id > 0) {
                     returnUri = TripContract.StandardChargeEntry.buildStandardChargeById(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            }
+            case CHARGE_ENTRY: {
+                long _id = db.insert(TripContract.TripChargeEntry.TABLE_NAME, null, values);
+                if ( _id > 0) {
+                    returnUri = TripContract.TripChargeEntry.buildTripChargeById(_id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -193,6 +247,14 @@ public class TripProvider extends ContentProvider {
                 rowsDeleted = db.delete(TripContract.ClientEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
+            case TRIP: {
+                rowsDeleted = db.delete(TripContract.TripEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            case CHARGE_ENTRY: {
+                rowsDeleted = db.delete(TripContract.TripChargeEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
             default:
                 throw new UnknownFormatConversionException("Unknown uri: " + uri);
         }
@@ -217,6 +279,13 @@ public class TripProvider extends ContentProvider {
             case CLIENT:
                 try {
                     rowsUpdated = db.update(TripContract.ClientEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case TRIP:
+                try {
+                    rowsUpdated = db.update(TripContract.TripEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

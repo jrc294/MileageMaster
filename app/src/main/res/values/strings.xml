@@ -10,16 +10,17 @@
     <string name="trip_saved">Trip saved</string>
     <string name="standard_charge_deleted">Standard charge deleted</string>
     <string name="client_deleted">Client deleted</string>
+    <string name="trip_deleted">Trip deleted</string>
     <string name="error">Error</string>
     <string name="delete_item">Delete</string>
-    <string name="dialog_deleted">This will be deleted.</string>
+    <string name="dialog_deleted">OK to delete?</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
     <string name="client_not_saved">Client not saved because the name is empty</string>
     <string name="title_activity_client">ClientActivity</string>
     <string name="title_activity_client_list">ClientListActivity</string>
-    <string name="tax_percent">Tax %</string>
+    <string name="tax_percent">0.00%</string>
     <string name="client_activity_enter_the_default_charge">Enter any default charges here</string>
     <string name="standard_charge_is_in_use">Delete failed as the charge is being used by %1$s</string>
 
@@ -33,8 +34,8 @@
     <string name="distance_travelled">Distance Travelled</string>
     <string name="trip_complete">Trip Complete</string>
     <string name="total">Mileage Charge</string>
-    <string name="calc_tax">Add the Tax</string>
     <string name="total_cost">Total Cost</string>
+    <string name="calc_tax">Add the Tax</string>
     <string name="notes">Notes</string>
     <string name="client">Client</string>
     <string name="additional_charge">Other Charge</string>
@@ -42,4 +43,10 @@
     <string name="miles_traveled">Distance</string>
     <string name="mileage_cost">Mileage Cost</string>
     <string name="title_activity_trip_list_activity_fragment">TripListActivityFragment</string>
+    <string name="myself">My self</string>
+    <string name="notset">** Not Set **</string>
+    <string name="cannot_delete">You cannot delete the default client</string>
+    <string name="cost_per_mile">Cost per mile</string>
+    <string name="Percentage_tax_rate">Percentage tax rate</string>
+    <string name="tax">Tax</string>
 </resources>

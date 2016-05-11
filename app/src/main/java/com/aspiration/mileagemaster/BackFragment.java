@@ -9,4 +9,6 @@ public interface BackFragment {
 
     public void deleteItem();
 
+    public Long getItemId();
+
 }

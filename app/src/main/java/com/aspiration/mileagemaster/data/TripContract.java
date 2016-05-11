@@ -75,7 +75,7 @@ public class TripContract {
         }
 
         // Method to return the ID of a standard charge being used by a client
-        public static String getZZZ(Uri uri) {
+        public static String getStandardChargeFromClient(Uri uri) {
             return uri.getPathSegments().get(2);
         }
     }
@@ -107,6 +107,18 @@ public class TripContract {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_COST = "cost";
         public static final String COLUMN_IS_TAX = "is_tax";
+
+        public static final String PATH_TRIP_CHARGE_ENTRY = "trip_charge_entry";
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).build();
+
+        public static Uri buildTripChargeById(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static String getIDSettingFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
     }
 
 

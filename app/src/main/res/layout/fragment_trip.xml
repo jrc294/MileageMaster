@@ -3,216 +3,80 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.aspiration.mileagemaster.TripActivityFragment">
-    <GridLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rowCount="16"
-        android:columnCount="3"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin_wide"
         android:paddingTop="?attr/actionBarSize">
         <ImageView
+            android:id="@+id/imgCalendar"
             android:src="@mipmap/ic_action_calendar_month"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_width="wrap_content"
-            android:layout_columnWeight="1"
             android:layout_height="wrap_content"/>
-        <Spinner
-            android:id="@+id/spTripDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="roboto"
-            android:layout_columnWeight="6"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
-            android:hint="@string/date"/>
-        <Spinner
-            android:id="@+id/spTripTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="3"
-            android:fontFamily="roboto"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
-            android:hint="@string/time"/>
-        <Space
-            android:layout_row="2"
-            android:layout_column="0"
+        <LinearLayout
+            android:id="@+id/date_section"
+            android:layout_toRightOf="@+id/imgCalendar"
             android:layout_width="match_parent"
-            android:layout_columnSpan="3"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spTripDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:fontFamily="roboto"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:hint="@string/date"/>
+            <Spinner
+                android:id="@+id/spTripTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="roboto"
+                android:layout_weight="4"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:hint="@string/time"/>
+        </LinearLayout>
+        <Space
+            android:id="@+id/space1"
+            android:layout_below="@+id/date_section"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/activity_vertical_margin"/>
         <ImageView
+            android:id="@+id/imgClient"
             android:src="@mipmap/ic_action_user"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_below="@+id/space1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Spinner
             android:id="@+id/spClient"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_toRightOf="@+id/imgClient"
+            android:layout_below="@+id/space1"
             android:hint="@string/client"
-            android:layout_column="1"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:layout_columnSpan="2"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_height="wrap_content"/>
         <Space
-            android:layout_row="4"
-            android:layout_column="0"
+            android:id="@+id/space2"
             android:layout_width="match_parent"
-            android:layout_columnSpan="3"
+            android:layout_below="@+id/spClient"
             android:layout_height="@dimen/activity_vertical_margin"/>
         <ImageView
+            android:id="@+id/imgLocation"
             android:src="@mipmap/ic_action_location"
             android:layout_marginTop="@dimen/icon_padding_top"
             android:layout_width="wrap_content"
+            android:layout_below="@+id/space2"
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etFrom"
             android:hint="@string/from"
-            android:layout_columnSpan="2"
+            android:layout_below="@+id/space2"
+            android:layout_toRightOf="@+id/imgLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etTo"
-            android:hint="@string/to"
-            android:layout_column="1"
-            android:layout_columnSpan="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etMilesTravelled"
-            android:hint="@string/miles_traveled"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:inputType="numberDecimal"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etMileageCost"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:inputType="numberDecimal"
-            android:layout_height="wrap_content" />
-        <Space
-            android:layout_row="8"
-            android:layout_column="0"
-            android:layout_width="match_parent"
-            android:layout_columnSpan="3"
-            android:layout_height="@dimen/activity_vertical_margin"/>
-        <CheckBox
-            android:id="@+id/cbTripComplete"
-            android:layout_width="wrap_content"
-            android:layout_column="1"
-            android:layout_columnSpan="2"
-            android:text="@string/trip_complete"
-            android:layout_height="wrap_content" />
-        <Space
-            android:layout_row="10"
-            android:layout_column="0"
-            android:layout_width="match_parent"
-            android:layout_columnSpan="3"
-            android:layout_height="@dimen/activity_vertical_margin"/>
-        <ImageView
-            android:src="@mipmap/ic_action_creditcard"
-            android:layout_marginTop="@dimen/icon_padding_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Spinner
-            android:id="@+id/spTripCharge1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/edTripChargeAmount1"
-            android:hint="@string/zero_amount"
-            android:inputType="numberDecimal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Spinner
-            android:id="@+id/spTripCharge2"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/edTripChargeAmount2"
-            android:hint="@string/zero_amount"
-            android:inputType="numberDecimal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Spinner
-            android:id="@+id/spTripCharge3"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/edTripChargeAmount3"
-            android:hint="@string/zero_amount"
-            android:inputType="numberDecimal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerCharge1"
-            android:hint="@string/additional_charge"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerChargeAmount1"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerCharge2"
-            android:hint="@string/additional_charge"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerChargeAmount2"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerCharge3"
-            android:hint="@string/additional_charge"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etCustomerChargeAmount3"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/btCalcTax"
-            android:text="@string/calc_tax"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/etTaxAmount"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/edTotalCostLabel"
-            android:text="@string/total_cost"
-            android:layout_column="1"
-            android:enabled="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/edTotalCostAmount"
-            android:enabled="false"
-            android:hint="@string/zero_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView
-            android:src="@mipmap/ic_action_paste"
-            android:layout_marginTop="@dimen/icon_padding_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/etNotes"
-            android:layout_columnSpan="2"
-            android:hint="@string/notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </GridLayout>
+    </RelativeLayout>
 </ScrollView>
