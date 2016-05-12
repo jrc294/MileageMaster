@@ -37,8 +37,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -61,7 +63,8 @@ public class TripActivityFragment extends Fragment implements BackFragment{
     String[] chargeColumns = new String[]
             {TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID,
                     TripContract.TripChargeEntry.COLUMN_COST,
-                    TripContract.TripChargeEntry.COLUMN_DESCRIPTION};
+                    TripContract.TripChargeEntry.COLUMN_DESCRIPTION,
+                    TripContract.TripChargeEntry.COLUMN_IS_TAX};
 
     Long mId;
     private static final String DATE = "date";
@@ -85,17 +88,17 @@ public class TripActivityFragment extends Fragment implements BackFragment{
     CheckBox mIsComplete;
     EditText mNotes;
     HashMap<Long, Double> mStandardChargeCosts;
-    EditText mTripChargeAmount1;
-    EditText mTripChargeAmount2;
-    EditText mTripChargeAmount3;
+    EditTextCurrency mTripChargeAmount1;
+    EditTextCurrency mTripChargeAmount2;
+    EditTextCurrency mTripChargeAmount3;
     EditText mTripCustomerCharge1;
     EditText mTripCustomerCharge2;
     EditText mTripCustomerCharge3;
-    EditText mTripCustomerChargeAmount1;
-    EditText mTripCustomerChargeAmount2;
-    EditText mTripCustomerChargeAmount3;
-    EditText mTotalCostAmount;
-    EditText mTaxAmount;
+    EditTextCurrency mTripCustomerChargeAmount1;
+    EditTextCurrency mTripCustomerChargeAmount2;
+    EditTextCurrency mTripCustomerChargeAmount3;
+    EditTextCurrency mTotalCostAmount;
+    EditTextCurrency mTaxAmount;
     Button mTaxButton;
 
     @Override
@@ -106,7 +109,7 @@ public class TripActivityFragment extends Fragment implements BackFragment{
         mDateField = (Spinner) rootView.findViewById(R.id.spTripDate);
         mTimeField = (Spinner) rootView.findViewById(R.id.spTripTime);
         mClient = (Spinner) rootView.findViewById(R.id.spClient);
-        /*mCharge1 = (Spinner) rootView.findViewById(R.id.spTripCharge1);
+        mCharge1 = (Spinner) rootView.findViewById(R.id.spTripCharge1);
         mCharge2 = (Spinner) rootView.findViewById(R.id.spTripCharge2);
         mCharge3 = (Spinner) rootView.findViewById(R.id.spTripCharge3);
         mFrom = (EditText) rootView.findViewById(R.id.etFrom);
@@ -115,17 +118,17 @@ public class TripActivityFragment extends Fragment implements BackFragment{
         mMilesCost = (EditTextCurrency) rootView.findViewById(R.id.etMileageCost);
         mIsComplete = (CheckBox) rootView.findViewById(R.id.cbTripComplete);
         mNotes = (EditText) rootView.findViewById(R.id.etNotes);
-        mTripChargeAmount1 = (EditText) rootView.findViewById(R.id.edTripChargeAmount1);
-        mTripChargeAmount2 = (EditText) rootView.findViewById(R.id.edTripChargeAmount2);
-        mTripChargeAmount3 = (EditText) rootView.findViewById(R.id.edTripChargeAmount3);
+        mTripChargeAmount1 = (EditTextCurrency) rootView.findViewById(R.id.edTripChargeAmount1);
+        mTripChargeAmount2 = (EditTextCurrency) rootView.findViewById(R.id.edTripChargeAmount2);
+        mTripChargeAmount3 = (EditTextCurrency) rootView.findViewById(R.id.edTripChargeAmount3);
         mTripCustomerCharge1 = (EditText) rootView.findViewById(R.id.etCustomerCharge1);
         mTripCustomerCharge2 = (EditText) rootView.findViewById(R.id.etCustomerCharge2);
         mTripCustomerCharge3 = (EditText) rootView.findViewById(R.id.etCustomerCharge3);
-        mTripCustomerChargeAmount1 = (EditText) rootView.findViewById(R.id.etCustomerChargeAmount1);
-        mTripCustomerChargeAmount2 = (EditText) rootView.findViewById(R.id.etCustomerChargeAmount2);
-        mTripCustomerChargeAmount3 = (EditText) rootView.findViewById(R.id.etCustomerChargeAmount3);
-        mTotalCostAmount = (EditText) rootView.findViewById(R.id.etTotalCostAmount);
-        mTaxAmount = (EditText) rootView.findViewById(R.id.etTaxAmount);
+        mTripCustomerChargeAmount1 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount1);
+        mTripCustomerChargeAmount2 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount2);
+        mTripCustomerChargeAmount3 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount3);
+        mTotalCostAmount = (EditTextCurrency) rootView.findViewById(R.id.etTotalCostAmount);
+        mTaxAmount = (EditTextCurrency) rootView.findViewById(R.id.etTaxAmount);
         mTaxButton = (Button) rootView.findViewById(R.id.btCalcTax);
         mNotes = (EditText) rootView.findViewById(R.id.etNotes);
 
@@ -159,11 +162,12 @@ public class TripActivityFragment extends Fragment implements BackFragment{
         mTaxButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTaxAmount.setText(calcTax());
+                mTaxAmount.setText(String.valueOf(calcTax()));
+                mTaxAmount.formatAmount();
                 calcTotals();
             }
         });
-        */
+
         String[] fromColumns = new String[]{TripContract.ClientEntry.COLUMN_NAME};
         int[] toViews = new int[]{android.R.id.text1};
 
@@ -174,15 +178,12 @@ public class TripActivityFragment extends Fragment implements BackFragment{
         clientCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mClient.setAdapter(clientCursorAdapter);
 
-        /*
-
         Cursor standardChargeCursor = getActivity().getContentResolver().query(TripContract.StandardChargeEntry.CONTENT_URI,
                 new String[]{TripContract.StandardChargeEntry._ID, TripContract.StandardChargeEntry.COLUMN_NAME, TripContract.StandardChargeEntry.COLUMN_COST},
                 null,null,null);
 
         SimpleCursorAdapter standardChargeCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, standardChargeCursor, fromColumns, toViews,0);
         standardChargeCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 
         if (savedInstanceState != null) {
             mCalendar = (Calendar) savedInstanceState.getSerializable(DATE);
@@ -202,6 +203,7 @@ public class TripActivityFragment extends Fragment implements BackFragment{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mTripChargeAmount1.setText(String.valueOf(mStandardChargeCosts.get(mCharge1.getSelectedItemId())));
+                mTripChargeAmount1.formatAmount();
                 calcTotals();
             }
 
@@ -216,6 +218,7 @@ public class TripActivityFragment extends Fragment implements BackFragment{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mTripChargeAmount2.setText(String.valueOf(mStandardChargeCosts.get(mCharge2.getSelectedItemId())));
+                mTripChargeAmount2.formatAmount();
                 calcTotals();
             }
 
@@ -230,6 +233,7 @@ public class TripActivityFragment extends Fragment implements BackFragment{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mTripChargeAmount3.setText(String.valueOf(mStandardChargeCosts.get(mCharge3.getSelectedItemId())));
+                mTripChargeAmount3.formatAmount();
                 calcTotals();
             }
 
@@ -319,44 +323,50 @@ public class TripActivityFragment extends Fragment implements BackFragment{
                     int spinner_id = standard_charge_cursor.getInt(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID));
                     String charge_cost = String.valueOf(standard_charge_cursor.getFloat(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_COST)));
                     String description = standard_charge_cursor.getString(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_DESCRIPTION));
-                    if (spinner_id > 0) {
-                        switch (standard_charge_count) {
-                            case 0:
-                                mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, spinner_id));
-                                mTripChargeAmount1.setText(charge_cost);
-                                break;
-                            case 1:
-                                mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, spinner_id));
-                                mTripChargeAmount2.setText(charge_cost);
-                                break;
-                            case 2:
-                                mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, spinner_id));
-                                mTripChargeAmount3.setText(charge_cost);
-                                break;
+                    boolean is_tax = standard_charge_cursor.getInt(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_IS_TAX)) == 1 ? true : false;
+                    if (is_tax) {
+                        mTaxAmount.setText(charge_cost);
+                        mTaxAmount.formatAmount();
+                    } else if (spinner_id > 0) {
+                            switch (standard_charge_count) {
+                                case 0:
+                                    mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, spinner_id));
+                                    mTripChargeAmount1.setText(charge_cost);
+                                    break;
+                                case 1:
+                                    mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, spinner_id));
+                                    mTripChargeAmount2.setText(charge_cost);
+                                    break;
+                                case 2:
+                                    mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, spinner_id));
+                                    mTripChargeAmount3.setText(charge_cost);
+                                    break;
+                            }
+                            standard_charge_count++;
+                        } else {
+                            switch (customer_charge_count) {
+                                case 0:
+                                    mTripCustomerCharge1.setText(description);
+                                    mTripCustomerChargeAmount1.setText(charge_cost);
+                                    mTripCustomerChargeAmount1.formatAmount();
+                                    break;
+                                case 1:
+                                    mTripCustomerCharge2.setText(description);
+                                    mTripCustomerChargeAmount2.setText(charge_cost);
+                                    mTripCustomerChargeAmount2.formatAmount();
+                                    break;
+                                case 2:
+                                    mTripCustomerCharge3.setText(description);
+                                    mTripCustomerChargeAmount3.setText(charge_cost);
+                                    mTripCustomerChargeAmount3.formatAmount();
+                                    break;
+                            }
+                            customer_charge_count++;
                         }
-                        standard_charge_count++;
-                    } else {
-                        switch (customer_charge_count) {
-                            case 0:
-                                mTripCustomerCharge1.setText(description);
-                                mTripCustomerChargeAmount1.setText(charge_cost);
-                                break;
-                            case 1:
-                                mTripCustomerCharge2.setText(description);
-                                mTripCustomerChargeAmount2.setText(charge_cost);
-                                break;
-                            case 2:
-                                mTripCustomerCharge3.setText(description);
-                                mTripCustomerChargeAmount3.setText(charge_cost);
-                                break;
-                        }
-                        customer_charge_count++;
-                    }
-
                 } while (standard_charge_cursor.moveToNext());
             }
             standard_charge_cursor.close();
-        }*/
+        }
 
         // Set the date
 
@@ -537,29 +547,45 @@ public class TripActivityFragment extends Fragment implements BackFragment{
             trip_charge_id = saveCharge(trip_id, mTripCustomerCharge3, mTripCustomerChargeAmount3);
             ret = trip_charge_id.equals("-1") ? false : true;
         }
+        if (ret && !mTaxAmount.getText().toString().equals("")) {
+            trip_charge_id = saveTax(trip_id, mTaxAmount);
+            ret = trip_charge_id.equals("-1") ? false : true;
+        }
         return ret;
 
     }
 
-    private String saveCharge(String trip_id, Spinner charge, EditText cost) {
+    private String saveCharge(String trip_id, Spinner charge, EditTextCurrency cost) {
 
         // Now save the charges
         ContentValues cvTripCharges = new ContentValues();
         cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_TRIP_ID, Long.valueOf(trip_id));
         cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_DESCRIPTION, charge.getSelectedItem().toString());
         cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID, charge.getSelectedItemId());
-        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_COST, Float.parseFloat(cost.getText().toString()));
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_COST, cost.getValue());
         Uri uri = getActivity().getContentResolver().insert(TripContract.TripChargeEntry.CONTENT_URI, cvTripCharges);
         return TripContract.TripChargeEntry.getIDSettingFromUri(uri);
     }
 
-    private String saveCharge(String trip_id, EditText charge, EditText cost) {
+    private String saveCharge(String trip_id, EditText charge, EditTextCurrency cost) {
 
         // Now save the charges
         ContentValues cvTripCharges = new ContentValues();
         cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_TRIP_ID, Long.valueOf(trip_id));
         cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_DESCRIPTION, charge.getText().toString());
-        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_COST, Float.parseFloat(cost.getText().toString()));
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_COST, cost.getValue());
+        Uri uri = getActivity().getContentResolver().insert(TripContract.TripChargeEntry.CONTENT_URI, cvTripCharges);
+        return TripContract.TripChargeEntry.getIDSettingFromUri(uri);
+    }
+
+    private String saveTax(String trip_id, EditTextCurrency cost) {
+
+        // Now save the charges
+        ContentValues cvTripCharges = new ContentValues();
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_TRIP_ID, Long.valueOf(trip_id));
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_DESCRIPTION, getResources().getString(R.string.tax));
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_COST, cost.getValue());
+        cvTripCharges.put(TripContract.TripChargeEntry.COLUMN_IS_TAX, true);
         Uri uri = getActivity().getContentResolver().insert(TripContract.TripChargeEntry.CONTENT_URI, cvTripCharges);
         return TripContract.TripChargeEntry.getIDSettingFromUri(uri);
     }
@@ -581,32 +607,32 @@ public class TripActivityFragment extends Fragment implements BackFragment{
         return nf.format(tripCost);
     }
 
-    private String calcTax() {
+    private double calcTax() {
 
-        float tax = 0;
-        NumberFormat nf = NumberFormat.getCurrencyInstance();
+        double tax = 0;
         Cursor cursor = getActivity().getContentResolver().query(TripContract.ClientEntry.buildClientById(mClient.getSelectedItemId()),
                 new String[]{TripContract.ClientEntry.COLUMN_TAX_RATE},null,null,null,null);
         if (cursor.moveToFirst()) {
-            float tax_rate = cursor.getFloat(cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_TAX_RATE));
-            tax = (Float.parseFloat(mTotalCostAmount.getText().toString()) * tax_rate);
+            double tax_rate = cursor.getDouble(cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_TAX_RATE));
+            tax = (mTotalCostAmount.getValue() * tax_rate);
         }
         cursor.close();
-        return nf.format(tax);
+        return tax;
     }
 
     private void calcTotals() {
 
         float total_charges = 0;
-        total_charges += Float.parseFloat("0" + mMilesCost.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripChargeAmount1.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripChargeAmount2.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripChargeAmount3.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripCustomerChargeAmount1.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripCustomerChargeAmount2.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTripCustomerChargeAmount3.getText().toString().replace("$",""));
-        total_charges += Float.parseFloat("0" + mTaxAmount.getText().toString().replace("$",""));
+        total_charges += mMilesCost.getValue();
+        total_charges += mTripChargeAmount1.getValue();
+        total_charges += mTripChargeAmount2.getValue();
+        total_charges += mTripChargeAmount3.getValue();
+        total_charges += mTripCustomerChargeAmount1.getValue();
+        total_charges += mTripCustomerChargeAmount2.getValue();
+        total_charges += mTripCustomerChargeAmount3.getValue();
+        total_charges += mTaxAmount.getValue();
         mTotalCostAmount.setText(String.valueOf(total_charges));
+        mTotalCostAmount.formatAmount();
     }
 
     public static class TimePickerFragment extends DialogFragment

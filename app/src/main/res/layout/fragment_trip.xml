@@ -25,7 +25,7 @@
                 android:id="@+id/spTripDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
+                android:layout_weight="9"
                 android:fontFamily="roboto"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:hint="@string/date"/>
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="roboto"
-                android:layout_weight="4"
+                android:layout_weight="1"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:hint="@string/time"/>
         </LinearLayout>
@@ -76,6 +76,238 @@
             android:hint="@string/from"
             android:layout_below="@+id/space2"
             android:layout_toRightOf="@+id/imgLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/etTo"
+            android:hint="@string/to"
+            android:layout_toRightOf="@+id/imgLocation"
+            android:layout_below="@+id/etFrom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/distance_section"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_toEndOf="@+id/imgLocation"
+            android:layout_below="@+id/etTo"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/etMilesTravelled"
+                android:hint="@string/miles_traveled"
+                android:layout_weight="9"
+                android:layout_width="wrap_content"
+                android:maxLines="1"
+                android:maxLength="5"
+                android:inputType="numberDecimal"
+                android:layout_height="wrap_content" />
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/etMileageCost"
+                android:hint="@string/zero_amount"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="16dp"
+                android:maxLines="1"
+                android:gravity="right"
+                android:inputType="numberDecimal"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <Space
+            android:id="@+id/space3"
+            android:layout_below="@+id/distance_section"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_vertical_margin"/>
+        <CheckBox
+            android:id="@+id/cbTripComplete"
+            android:layout_below="@+id/space3"
+            android:layout_toEndOf="@+id/imgLocation"
+            android:layout_width="wrap_content"
+            android:text="@string/trip_complete"
+            android:layout_height="wrap_content" />
+        <Space
+            android:id="@+id/space4"
+            android:layout_below="@+id/cbTripComplete"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_vertical_margin"/>
+        <ImageView
+            android:id="@+id/imgCharge"
+            android:src="@mipmap/ic_action_creditcard"
+            android:layout_marginTop="@dimen/icon_padding_top"
+            android:layout_below="@+id/space4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/standard_charge_1_section"
+            android:layout_below="@+id/space4"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spTripCharge1"
+                android:layout_weight="0.8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/edTripChargeAmount1"
+                android:hint="@string/zero_amount"
+                android:layout_marginStart="16dp"
+                android:gravity="end"
+                android:inputType="numberDecimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/standard_charge_2_section"
+            android:layout_below="@+id/standard_charge_1_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spTripCharge2"
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/edTripChargeAmount2"
+                android:hint="@string/zero_amount"
+                android:layout_marginStart="16dp"
+                android:gravity="end"
+                android:inputType="numberDecimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/standard_charge_3_section"
+            android:layout_below="@+id/standard_charge_2_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spTripCharge3"
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/edTripChargeAmount3"
+                android:hint="@string/zero_amount"
+                android:layout_marginStart="16dp"
+                android:gravity="end"
+                android:inputType="numberDecimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/adhoc_charge_1_section"
+            android:layout_below="@+id/standard_charge_3_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/etCustomerCharge1"
+                android:layout_weight="0.9"
+                android:singleLine="true"
+                android:hint="@string/additional_charge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/etCustomerChargeAmount1"
+                android:layout_marginStart="16dp"
+                android:singleLine="true"
+                android:gravity="end"
+                android:hint="@string/zero_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/adhoc_charge_2_section"
+            android:layout_below="@+id/adhoc_charge_1_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/etCustomerCharge2"
+                android:layout_weight="0.9"
+                android:singleLine="true"
+                android:hint="@string/additional_charge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/etCustomerChargeAmount2"
+                android:gravity="end"
+                android:singleLine="true"
+                android:layout_marginStart="16dp"
+                android:hint="@string/zero_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/adhoc_charge_3_section"
+            android:layout_below="@+id/adhoc_charge_2_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/etCustomerCharge3"
+                android:layout_weight="0.9"
+                android:singleLine="true"
+                android:hint="@string/additional_charge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <com.aspiration.mileagemaster.EditTextCurrency
+                android:id="@+id/etCustomerChargeAmount3"
+                android:gravity="end"
+                android:singleLine="true"
+                android:layout_marginStart="16dp"
+                android:hint="@string/zero_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/btCalcTax"
+            android:text="@string/calc_tax"
+            android:layout_below="@+id/adhoc_charge_3_section"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.aspiration.mileagemaster.EditTextCurrency
+            android:id="@+id/etTaxAmount"
+            android:hint="@string/zero_amount"
+            android:singleLine="true"
+            android:layout_below="@+id/adhoc_charge_3_section"
+            android:layout_alignEnd="@+id/adhoc_charge_3_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/edTotalCostLabel"
+            android:textColor="@android:color/black"
+            android:text="@string/total_cost"
+            android:layout_below="@+id/btCalcTax"
+            android:layout_toEndOf="@+id/imgCharge"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.aspiration.mileagemaster.EditTextCurrency
+            android:id="@+id/etTotalCostAmount"
+            android:enabled="false"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/etTaxAmount"
+            android:layout_alignEnd="@+id/adhoc_charge_3_section"
+            android:hint="@string/zero_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/imgNotes"
+            android:src="@mipmap/ic_action_paste"
+            android:layout_below="@+id/edTotalCostLabel"
+            android:layout_marginTop="@dimen/icon_padding_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etNotes"
+            android:layout_below="@+id/edTotalCostLabel"
+            android:layout_toRightOf="@+id/imgNotes"
+            android:hint="@string/notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </RelativeLayout>

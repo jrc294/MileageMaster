@@ -46,7 +46,7 @@ public class EditTextCurrency extends EditText {
 			this.setText("0");
 		}
 		NumberFormat fmt = NumberFormat.getCurrencyInstance();
-		mValue = Double.parseDouble(this.getText().toString().replace(Currency.getInstance(Locale.getDefault()).getSymbol(),""));
+		mValue = Double.parseDouble(this.getText().toString().replace(Currency.getInstance(Locale.getDefault()).getSymbol(),"").replace(",",""));
 		this.setText(fmt.format(mValue).toString());
 	}
 
