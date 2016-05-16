@@ -34,8 +34,8 @@
     <string name="distance_travelled">Distance Travelled</string>
     <string name="trip_complete">Trip Complete</string>
     <string name="total">Mileage Charge</string>
-    <string name="total_cost">Total Cost</string>
-    <string name="calc_tax">Add the Tax</string>
+    <string name="total_cost">Refresh Total</string>
+    <string name="calc_tax">Refresh Tax</string>
     <string name="notes">Notes</string>
     <string name="client">Client</string>
     <string name="additional_charge">Other Charge</string>

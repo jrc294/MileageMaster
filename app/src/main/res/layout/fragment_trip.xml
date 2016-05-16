@@ -212,6 +212,7 @@
                 android:id="@+id/etCustomerChargeAmount1"
                 android:layout_marginStart="16dp"
                 android:singleLine="true"
+                android:inputType="numberDecimal"
                 android:gravity="end"
                 android:hint="@string/zero_amount"
                 android:layout_width="wrap_content"
@@ -236,6 +237,7 @@
                 android:gravity="end"
                 android:singleLine="true"
                 android:layout_marginStart="16dp"
+                android:inputType="numberDecimal"
                 android:hint="@string/zero_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -259,6 +261,7 @@
                 android:gravity="end"
                 android:singleLine="true"
                 android:layout_marginStart="16dp"
+                android:inputType="numberDecimal"
                 android:hint="@string/zero_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -278,13 +281,12 @@
             android:layout_alignEnd="@+id/adhoc_charge_3_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/edTotalCostLabel"
+        <Button
+            android:id="@+id/btnTotalCostLabel"
             android:textColor="@android:color/black"
             android:text="@string/total_cost"
             android:layout_below="@+id/btCalcTax"
             android:layout_toEndOf="@+id/imgCharge"
-            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <com.aspiration.mileagemaster.EditTextCurrency
@@ -299,13 +301,13 @@
         <ImageView
             android:id="@+id/imgNotes"
             android:src="@mipmap/ic_action_paste"
-            android:layout_below="@+id/edTotalCostLabel"
+            android:layout_below="@+id/btnTotalCostLabel"
             android:layout_marginTop="@dimen/icon_padding_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etNotes"
-            android:layout_below="@+id/edTotalCostLabel"
+            android:layout_below="@+id/btnTotalCostLabel"
             android:layout_toRightOf="@+id/imgNotes"
             android:hint="@string/notes"
             android:layout_width="match_parent"

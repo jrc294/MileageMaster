@@ -4,12 +4,17 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,7 +26,7 @@ import java.text.NumberFormat;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ClientActivityFragment extends Fragment implements BackFragment {
+public class ClientActivityFragment extends Fragment implements BackFragment, LoaderManager.LoaderCallbacks<Cursor> {
 
     public ClientActivityFragment() {
     }
@@ -33,6 +38,7 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     EditText mName;
     EditTextCurrency mCostPerMile;
     EditText mTaxRate;
+    Client mClient;
 
     private static final String INITIAL_NAME = "initial_name";
     private static final String INITIAL_COST_PER_MILE = "initial_cost_per_mile";
@@ -42,12 +48,12 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     private static final String INITIAL_CHARGE3 = "initial_charge3";
     private static final String INITIAL_ID = "initial_id";
 
-    String mInitName;
-    String mInitCostPerMile;
-    String mInitTaxRate;
-    long mInitCharge1;
-    long mInitCharge2;
-    long mInitCharge3;
+    private static final int CLIENT_FRAGMENT_CHARGES_LOADER = 200;
+    private static final int CLIENT_FRAGMENT_LOADER = 201;
+
+    SimpleCursorAdapter mAdapter;
+    boolean mIsClientFragmentChargesLoaded = false;
+    boolean mIsClientFragmentLoaded = false;
 
     String[] clientColumns = new String[]
             {TripContract.ClientEntry.COLUMN_NAME,
@@ -60,7 +66,6 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
 
         View viewroot =  inflater.inflate(R.layout.fragment_client, container, false);
         mCharge1 = (Spinner) viewroot.findViewById(R.id.spStandardCharge1);
@@ -79,99 +84,60 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
             }
         });
 
-
         String[] fromColumns = new String[]{TripContract.StandardChargeEntry.COLUMN_NAME};
         int[] toViews = new int[]{android.R.id.text1};
 
-        Cursor cursor = getActivity().getContentResolver().query(TripContract.StandardChargeEntry.CONTENT_URI,
-                new String[]{TripContract.StandardChargeEntry._ID, TripContract.StandardChargeEntry.COLUMN_NAME},
-                null,null,null);
-
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, cursor, fromColumns, toViews,0);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mCharge1.setAdapter(adapter);
-        mCharge2.setAdapter(adapter);
-        mCharge3.setAdapter(adapter);
-
-        mId = getActivity().getIntent().getExtras() != null ? getActivity().getIntent().getExtras().getLong(StandardChargeListActivity.KEY_ID) : null;
-        if (mId != null) {
-            Cursor client_cursor = getActivity().getContentResolver().query(TripContract.ClientEntry.buildClientById(mId),
-                    clientColumns,
-                    TripContract.ClientEntry._ID + " = ?",
-                    new String[]{String.valueOf(mId)},
-                    null,
-                    null);
-            client_cursor.moveToFirst();
-            mName.setText(client_cursor.getString(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_NAME)));
-            mCostPerMile.setText(String.valueOf(client_cursor.getFloat(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE))));
-            mTaxRate.setText(String.valueOf(client_cursor.getFloat(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_TAX_RATE))));
-            mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, client_cursor.getInt(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID))));
-            mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, client_cursor.getInt(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID))));
-            mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, client_cursor.getInt(client_cursor.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID))));
-            //mCost.formatCharge(true);
-            client_cursor.close();
-
-            if (savedInstanceState != null) {
-                mInitName = savedInstanceState.getString(INITIAL_NAME);
-                mInitCostPerMile = savedInstanceState.getString(INITIAL_COST_PER_MILE);
-                mInitTaxRate = savedInstanceState.getString(INITIAL_TAX_RATE);
-                mInitCharge1 = savedInstanceState.getLong(INITIAL_CHARGE1);
-                mInitCharge2 = savedInstanceState.getLong(INITIAL_CHARGE2);
-                mInitCharge3 = savedInstanceState.getLong(INITIAL_CHARGE3);
-                mId = savedInstanceState.getLong(INITIAL_ID);
-            } else {
-                mInitName = mName.getText().toString();
-                mInitCostPerMile = mCostPerMile.getText().toString();
-                mInitCharge1 = mCharge1.getSelectedItemId();
-                mInitCharge2 = mCharge2.getSelectedItemId();
-                mInitCharge3 = mCharge3.getSelectedItemId();
-                mInitTaxRate = mTaxRate.getText().toString();
-            }
-            formatTax();
-            mCostPerMile.formatAmount();
-        }
+        mAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, null, fromColumns, toViews,0);
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCharge1.setAdapter(mAdapter);
+        mCharge2.setAdapter(mAdapter);
+        mCharge3.setAdapter(mAdapter);
 
         return viewroot;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        mId = getActivity().getIntent().getExtras() != null ? getActivity().getIntent().getExtras().getLong(StandardChargeListActivity.KEY_ID) : null;
+        getLoaderManager().initLoader(CLIENT_FRAGMENT_CHARGES_LOADER, null, this);
+        // Only load the client detail if this is an edit and the client data isn't already in memory
+        if (mId != null && savedInstanceState == null) {
+            getLoaderManager().initLoader(CLIENT_FRAGMENT_LOADER, null, this);
+        }
+        super.onActivityCreated(savedInstanceState);
     }
 
 
     @Override
     public void backPressed() {
         formatTax();
+        mCostPerMile.formatAmount();
+        ContentValues cv = new ContentValues();
+        cv.put(TripContract.ClientEntry.COLUMN_NAME, mName.getText().toString());
+        cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, mCostPerMile.getValue());
+        cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString().replace("%","")));
+        cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID, mCharge1.getSelectedItemId());
+        cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID, mCharge2.getSelectedItemId());
+        cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID, mCharge3.getSelectedItemId());
         // Insert on back press
-        if (!mName.getText().toString().equals(mInitName) || !mCostPerMile.getText().toString().equals(mInitCostPerMile) || !mTaxRate.getText().toString().equals(mInitTaxRate) || mCharge1.getSelectedItemId() != mInitCharge1  || mCharge2.getSelectedItemId() != mInitCharge2  || mCharge3.getSelectedItemId() != mInitCharge3) {
-            if (mId == null && !mName.getText().toString().equals("") && !mCostPerMile.getText().toString().equals("")  && !mTaxRate.getText().toString().equals("")) {
-                // Save new charge
-                //mCostPerMile.formatCharge(true);
-                ContentValues cv = new ContentValues();
-                cv.put(TripContract.ClientEntry.COLUMN_NAME, mName.getText().toString());
-                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, mCostPerMile.getValue());
-                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString().replace("%","")));
-                Uri uri = getActivity().getContentResolver().insert(TripContract.ClientEntry.CONTENT_URI, cv);
-                if (!TripContract.ClientEntry.getIDSettingFromUri(uri).equals(-1)) {
-                    Toast.makeText(getActivity(), getString(R.string.client_saved), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
-                }
-            } else if (mId != null && !mName.getText().toString().equals("") && !mCostPerMile.getText().toString().equals("")  && !mTaxRate.getText().toString().equals("")) {
-                // Update on back press
-                //mCost.formatCharge(true);
-                ContentValues cv = new ContentValues();
-                cv.put(TripContract.ClientEntry.COLUMN_NAME, mName.getText().toString());
-                cv.put(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE, mCostPerMile.getValue());
-                cv.put(TripContract.ClientEntry.COLUMN_TAX_RATE, Float.parseFloat(mTaxRate.getText().toString().replace("%","")));
-                cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID, (int) mCharge1.getSelectedItemId());
-                cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID, (int) mCharge2.getSelectedItemId());
-                cv.put(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID, (int) mCharge3.getSelectedItemId());
-                int rows_updated = getActivity().getContentResolver().update(TripContract.ClientEntry.CONTENT_URI, cv, TripContract.ClientEntry._ID + " = ?", new String[]{String.valueOf(mId)});
-                if (rows_updated > 0) {
-                    Toast.makeText(getActivity(), getString(R.string.client_saved), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
-                }
-            } else if (mName.getText().toString().equals("")) {
-                Toast.makeText(getActivity(), getString(R.string.client_not_saved), Toast.LENGTH_SHORT).show();
+        if (mId == null && !mName.getText().toString().equals("")) {
+            // Save new charge
+            Uri uri = getActivity().getContentResolver().insert(TripContract.ClientEntry.CONTENT_URI, cv);
+            if (!TripContract.ClientEntry.getIDSettingFromUri(uri).equals(-1)) {
+                Toast.makeText(getActivity(), getString(R.string.client_saved), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
             }
+        } else if (mId != null && !mName.getText().toString().equals("") && !mCostPerMile.getText().toString().equals("")  && !mTaxRate.getText().toString().equals("")) {
+            // Update on back press
+            int rows_updated = getActivity().getContentResolver().update(TripContract.ClientEntry.CONTENT_URI, cv, TripContract.ClientEntry._ID + " = ?", new String[]{String.valueOf(mId)});
+            if (rows_updated > 0) {
+                Toast.makeText(getActivity(), getString(R.string.client_saved), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
+        } else if (mName.getText().toString().equals("")) {
+            Toast.makeText(getActivity(), getString(R.string.client_not_saved), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -194,13 +160,6 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Store the movie stores
-        outState.putString(INITIAL_NAME, mInitName);
-        outState.putString(INITIAL_COST_PER_MILE, mInitCostPerMile);
-        outState.putString(INITIAL_TAX_RATE, mInitTaxRate);
-        outState.putLong(INITIAL_CHARGE1, mInitCharge1);
-        outState.putLong(INITIAL_CHARGE2, mInitCharge2);
-        outState.putLong(INITIAL_CHARGE3, mInitCharge3);
         if (mId != null) {
             outState.putLong(INITIAL_ID, mId);
         }
@@ -214,5 +173,62 @@ public class ClientActivityFragment extends Fragment implements BackFragment {
         fmt.setMinimumFractionDigits(2);
         fmt.setMaximumFractionDigits(2);
         mTaxRate.setText(fmt.format(Float.parseFloat(mTaxRate.getText().toString().replace("%","")) / 100).toString());
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        CursorLoader loader = null;
+        if (id == CLIENT_FRAGMENT_CHARGES_LOADER) {
+            loader = new CursorLoader(getActivity(), TripContract.StandardChargeEntry.CONTENT_URI,
+                    new String[]{TripContract.StandardChargeEntry._ID, TripContract.StandardChargeEntry.COLUMN_NAME},
+                    null, null, null);
+        } else if (id == CLIENT_FRAGMENT_LOADER) {
+            loader = new CursorLoader(getActivity(), TripContract.ClientEntry.buildClientById(mId),
+                    clientColumns,
+                    TripContract.ClientEntry._ID + " = ?", new String[]{String.valueOf(mId)}, null);
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data.getCount() > 0) {
+            if (loader.getId() == CLIENT_FRAGMENT_CHARGES_LOADER) {
+                mAdapter.swapCursor(data);
+                mIsClientFragmentChargesLoaded = true;
+                populateData();
+            } else if (loader.getId() == CLIENT_FRAGMENT_LOADER) {
+                data.moveToFirst();
+                mClient = new Client(data.getString(data.getColumnIndex(TripContract.ClientEntry.COLUMN_NAME)),
+                        data.getDouble(data.getColumnIndex(TripContract.ClientEntry.COLUMN_PRICE_PER_MILE)),
+                        data.getDouble(data.getColumnIndex(TripContract.ClientEntry.COLUMN_TAX_RATE)),
+                        data.getLong(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID)),
+                        data.getLong(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID)),
+                        data.getLong(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID)));
+                mIsClientFragmentLoaded = true;
+                populateData();
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (loader.getId() == CLIENT_FRAGMENT_CHARGES_LOADER) {
+            mAdapter.swapCursor(null);
+        }
+    }
+
+    private void populateData() {
+        if (mIsClientFragmentLoaded && mIsClientFragmentChargesLoaded) {
+            mName.setText(mClient.getName());
+            mCostPerMile.setText(String.valueOf(mClient.getCostPerMile()));
+            mTaxRate.setText(String.valueOf(String.valueOf(mClient.getTaxRate())));
+            mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, mClient.getCharge1id()));
+            mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, mClient.getCharge2id()));
+            mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, mClient.getCharge3id()));
+            formatTax();
+            mCostPerMile.formatAmount();
+        }
     }
 }

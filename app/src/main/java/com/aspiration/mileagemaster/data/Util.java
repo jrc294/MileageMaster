@@ -15,7 +15,7 @@ public class Util {
         return currency.getSymbol();
     }
 
-    public static int setSpinnerSelection(Spinner spinner, int value) {
+    public static int setSpinnerSelection(Spinner spinner, long value) {
 
         int ret = 0;
         for (int i = 0; i < spinner.getCount(); i++) {

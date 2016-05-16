@@ -15,7 +15,7 @@ import java.util.Locale;
 
 public class EditTextCurrency extends EditText {
 
-	private Double mValue;
+	private double mValue;
 
 	public EditTextCurrency(Context context, AttributeSet attr) {
 		super(context, attr);
@@ -33,12 +33,18 @@ public class EditTextCurrency extends EditText {
 		return mValue;
 	}
 
+	public void setValue(double value) {
+		this.mValue = value;
+		this.setText(String.valueOf(mValue));
+		formatAmount();
+	}
+
 	@Override
 	protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-		super.onFocusChanged(focused, direction, previouslyFocusedRect);
 		if (!focused) {
 			this.formatAmount();
 		}
+		super.onFocusChanged(focused, direction, previouslyFocusedRect);
 	}
 
 	public void formatAmount() {
