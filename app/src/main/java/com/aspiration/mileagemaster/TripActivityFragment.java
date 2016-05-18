@@ -812,7 +812,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             mCalendar.set(mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH),hourOfDay,minute);
-            mCallback.onDateSelected(mCalendar);
+            mCallback.onDateSelected(mCalendar, this.getTag());
         }
 
         @Override
@@ -823,7 +823,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             // the callback interface. If not, it throws an exception
             try {
                 mCallback = (DatePickerFragment.OnDateSelected) activity;
-                mCalendar = mCallback.getCurrentlySelectedDate();
+                mCalendar = mCallback.getCurrentlySelectedDate(this.getTag());
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement OnDateSelected");
@@ -838,8 +838,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         Calendar mCalendar = Calendar.getInstance();
 
         public interface OnDateSelected {
-            public void onDateSelected(Calendar calendar);
-            public Calendar getCurrentlySelectedDate();
+            public void onDateSelected(Calendar calendar, String tag);
+            public Calendar getCurrentlySelectedDate(String tag);
         }
 
         @Override
@@ -858,7 +858,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             mCalendar.set(year,monthOfYear,dayOfMonth);
-            mCallback.onDateSelected(mCalendar);
+            mCallback.onDateSelected(mCalendar, this.getTag());
         }
 
         @Override
@@ -869,7 +869,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             // the callback interface. If not, it throws an exception
             try {
                 mCallback = (OnDateSelected) activity;
-                mCalendar = mCallback.getCurrentlySelectedDate();
+                mCalendar = mCallback.getCurrentlySelectedDate(this.getTag());
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement OnDateSelected");

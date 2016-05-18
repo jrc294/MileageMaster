@@ -142,7 +142,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         Intent i = null;
         switch (mCurrent_tab) {
             case HOME : i = new Intent(this, TripActivity.class);break;
-            case MY_TRIPS: i = new Intent(this, TripActivity.class);break;
+            case MY_TRIPS: if (view.getTag() == null) {
+                i = new Intent(this, Search.class);
+            } else {
+                i = new Intent(this, TripActivity.class);
+            }
+            break;
             case CLIENTS : i = new Intent(this, ClientActivity.class); break;
             case CHARGES : i = new Intent(this, StandardChargeActivity.class); break;
         }

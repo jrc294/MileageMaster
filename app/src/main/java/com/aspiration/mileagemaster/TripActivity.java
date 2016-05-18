@@ -72,10 +72,7 @@ public class TripActivity extends AppCompatActivity implements TripActivityFragm
     }
 
     @Override
-    public void onDateSelected(Calendar calendar) {
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+    public void onDateSelected(Calendar calendar, String tag) {
         TripActivityFragment fragment = (TripActivityFragment) getSupportFragmentManager().findFragmentByTag(TRIPFRAGMENT_TAG);
         if (fragment != null) {
             fragment.UpdateDate(calendar);
@@ -83,7 +80,7 @@ public class TripActivity extends AppCompatActivity implements TripActivityFragm
     }
 
     @Override
-    public Calendar getCurrentlySelectedDate() {
+    public Calendar getCurrentlySelectedDate(String tag) {
         TripActivityFragment fragment = (TripActivityFragment) getSupportFragmentManager().findFragmentByTag(TRIPFRAGMENT_TAG);
         if (fragment != null) {
             return fragment.getCurrentlySelectedDate();

@@ -49,4 +49,6 @@
     <string name="cost_per_mile">Cost per mile</string>
     <string name="Percentage_tax_rate">Percentage tax rate</string>
     <string name="tax">Tax</string>
+    <string name="filteroncustomer">Filter on client</string>
+    <string name="trip_filter">Trip Filter</string>
 </resources>
