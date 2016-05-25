@@ -110,6 +110,10 @@ public class TripContract {
 
         public static final String PATH_TRIP_CHARGE_ENTRY = "trip_charge_entry";
 
+        public static final String PATH_TRIP_CHARGES_FOR_CLIENT_RANGE = "trip_charges_for_client_range";
+
+        public static final Uri CONTENT_CHARGES_FOR_CLIENT_RANGE_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).appendPath(PATH_TRIP_CHARGES_FOR_CLIENT_RANGE).build();
+
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).build();
 
         public static Uri buildTripChargeById(long id) {

@@ -4,8 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.Activity;
-import android.app.Dialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,48 +17,54 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.DatePicker;
+import android.widget.CheckedTextView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.app.DatePickerDialog;
 import android.widget.CheckBox;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.content.Intent;
 import android.database.Cursor;
 
 import com.aspiration.mileagemaster.data.TripContract;
 import com.aspiration.mileagemaster.data.Util;
 
+import org.w3c.dom.Text;
+
 public class Search extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TripActivityFragment.DatePickerFragment.OnDateSelected{
 
 	private Spinner mDateFrom;
 	private Spinner mDateTo;
-	private ImageButton btnRevert;
-	private ImageButton btnSearch;
+	private Button btnRevert;
+	private Button btnSearch;
 	private CheckBox chkCheck;
 	private TextView lblAgencies;
 	private static final String DATE_FROM_PICKER = "date_from_picker";
     private static final String DATE_TO_PICKER = "date_to_picker";
+    public static final String DATE_FROM = "date_from";
+    public static final String DATE_TO = "date_to";
+    public static final String INCLUDE_CLIENT = "include_client";
+    public static final String CLIENT_ID = "client_id";
+    public static final String CLIENT_NAME = "client_name";
+    public static final String COMPLETED_STATUS = "completed_status";
     private static final int LOADER_CLIENT = 20;
 	Calendar mCalendarFrom;
 	Calendar mCalendarTo;
 	private static final String DATE_FORMAT = "MM-dd-yyyy";
-	private static final String DATE_FORMAT_INT = "yyyy-MM-dd";
 	private Spinner mAgencies;
 	private Spinner mCompleted;
 	private long AgencySelected;
 	private String CompleteStateSelected;
+    Bundle bundle;
     SimpleCursorAdapter mClientCursorAdapter;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search);
 
+        bundle = getIntent().getExtras();
+
         if (savedInstanceState == null) {
-            mCalendarFrom = Calendar.getInstance();
-            mCalendarTo = Calendar.getInstance();
+            mCalendarFrom = (Calendar) bundle.getSerializable(DATE_FROM);
+            mCalendarTo = (Calendar) bundle.getSerializable(DATE_TO);
         } else {
             mCalendarFrom = (Calendar) savedInstanceState.getSerializable(DATE_FROM_PICKER);
             mCalendarTo = (Calendar) savedInstanceState.getSerializable(DATE_TO_PICKER);
@@ -100,6 +105,22 @@ public class Search extends AppCompatActivity implements LoaderManager.LoaderCal
         mClientCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item, null, fromColumns, toViews, 0);
         mClientCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mAgencies.setAdapter(mClientCursorAdapter);
+        mAgencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long id) {
+                AgencySelected = id;
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
 
 		//Intent i = this.getIntent();
 		//mCalendarFrom.set(Calendar.YEAR, i.getExtras().getInt("DATEFROMYEAR"));
@@ -115,10 +136,34 @@ public class Search extends AppCompatActivity implements LoaderManager.LoaderCal
 
 
 		mCompleted = (Spinner) findViewById(R.id.spnCompleted);
-		btnRevert = (ImageButton) findViewById(R.id.SearchCancelButton);
-		btnSearch = (ImageButton) findViewById(R.id.SearchOkButton);
+		btnRevert = (Button) findViewById(R.id.SearchCancelButton);
+		btnRevert.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+		btnSearch = (Button) findViewById(R.id.SearchOkButton);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                Bundle extras = new Bundle();
+                extras.putSerializable(DATE_FROM, mCalendarFrom);
+                extras.putSerializable(DATE_TO, mCalendarTo);
+                extras.putBoolean(INCLUDE_CLIENT, chkCheck.isChecked());
+                extras.putLong(CLIENT_ID, AgencySelected);
+                extras.putSerializable(CLIENT_NAME, ((Cursor) mAgencies.getSelectedItem()).getString(1));
+                extras.putString(COMPLETED_STATUS, mCompleted.getItemAtPosition(mCompleted.getSelectedItemPosition()).toString());
+                i.putExtras(extras);
+                setResult(RESULT_OK, i);
+                finish();
+            }
+        });
 		lblAgencies = (TextView) findViewById(R.id.lblAgencies);
 		chkCheck = (CheckBox) findViewById(R.id.cbkIncludeAgency);
+
+        chkCheck.setChecked((boolean) bundle.get(INCLUDE_CLIENT));
 
 		//chkCheck.setChecked(i.getExtras().getBoolean("INCLUDEAGENCY"));
 
@@ -183,23 +228,9 @@ public class Search extends AppCompatActivity implements LoaderManager.LoaderCal
 			}
 		});
 
-        /*
 
-		mAgencies.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long id) {
-				AgencySelected = id;
 
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 
 		/*objDbAdapter = new MileageBuddyDbAdapter(this);
 		objDbAdapter.open();
@@ -216,13 +247,13 @@ public class Search extends AppCompatActivity implements LoaderManager.LoaderCal
 		mAgencies.setAdapter(agencies);
 		objDbAdapter.close();
         */
-		String completedOptionsList[] = { "Completed Only", "Incompleted Only",
-				"All Trips" };
+		String completedOptionsList[] = { getString(R.string.all_trips), getString(R.string.completed_only), getString(R.string.incompleted_only),  };
 		ArrayAdapter<String> completedOptions = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, completedOptionsList);
 		completedOptions
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mCompleted.setAdapter(completedOptions);
+        mCompleted.setSelection(Util.setSpinnerSelection(mCompleted, bundle.getString(COMPLETED_STATUS)));
         /*
 		AgencySelected = i.getExtras().getLong("AGENCYID");
 
@@ -386,6 +417,7 @@ public class Search extends AppCompatActivity implements LoaderManager.LoaderCal
             SimpleCursorAdapter clientCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item, data, fromColumns, toViews, 0);
             clientCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mClientCursorAdapter.swapCursor(data);
+            mAgencies.setSelection(Util.setSpinnerSelection(mAgencies, bundle.getLong(CLIENT_ID)));
         }
     }
 

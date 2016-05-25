@@ -5,10 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -91,7 +93,6 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     private static final String ADHOC_CHARGE_2 = "adhoc_charge_2";
     private static final String ADHOC_CHARGE_3 = "adhoc_charge_3";
     private static final String TAX = "tax";
-    private static final String FIRST_TIME_CHARGE_3 = "first_time_charge_3";
     private static final String DATE_FORMAT = "dd-MMM-yyyy";
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd kk:mm:ss";
     private static final String TIME_FORMAT = "HH:mm";
@@ -113,9 +114,9 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     EditTextCurrency mTripChargeAmount1;
     EditTextCurrency mTripChargeAmount2;
     EditTextCurrency mTripChargeAmount3;
-    EditText mTripCustomerCharge1;
-    EditText mTripCustomerCharge2;
-    EditText mTripCustomerCharge3;
+    EditTextAdHocCharge mTripCustomerCharge1;
+    EditTextAdHocCharge mTripCustomerCharge2;
+    EditTextAdHocCharge mTripCustomerCharge3;
     EditTextCurrency mTripCustomerChargeAmount1;
     EditTextCurrency mTripCustomerChargeAmount2;
     EditTextCurrency mTripCustomerChargeAmount3;
@@ -386,6 +387,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         mTripChargeAmount3.formatAmount();
         mTaxAmount.formatAmount();
         mMilesCost.formatAmount();
+        calcTotals();
 
         if (mMilesTravelled.getText().length() == 0) {
             mMilesTravelled.setText("0");
@@ -399,9 +401,14 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             String sJourneyDateTime = String.format(
                     "%tb %1$te, %1$tl:%1$tM %1$Tp", mCalendar);
 
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String distance_units =  settings.getString(getString(R.string.pref_distance_unit_key),getString(R.string.pref_distance_unit_default));
+
             String sDescription = sJourneyDateTime + " - " + ((TextView)mClient.getSelectedView()).getText().toString()
                     + "\n" + mFrom.getText().toString() + " to " + mTo.getText().toString()
-                    + "\n" + mMilesTravelled.getText().toString() + " miles" + " - " + mMilesCost.getText().toString();
+                    + "\n" + mMilesTravelled.getText().toString() + " "
+                    + (distance_units.toLowerCase().equals(getString(R.string.pref_distance_unit_default)) ? getString(R.string.miles) : getString(R.string.kms)) +
+                    " - " + mTotalCostAmount.getText().toString();
 
             ContentValues cvTrip = new ContentValues();
             cvTrip.put(TripContract.TripEntry.COLUMN_STARTING_PLACE, mFrom.getText().toString());
@@ -766,6 +773,15 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             mTripCustomerCharge2.setText(mTrip.getAdHocCharge2());
             mTripCustomerCharge3.setText(mTrip.getAdHocCharge3());
             mTripCustomerChargeAmount1.setValue(mTrip.getAdHocChargeCost1());
+            if (mTripCustomerCharge1.getText().length() > 0) {
+                mTripCustomerChargeAmount1.setEnabled(true);
+            }
+            if (mTripCustomerCharge2.getText().length() > 0) {
+                mTripCustomerChargeAmount2.setEnabled(true);
+            }
+            if (mTripCustomerCharge3.getText().length() > 0) {
+                mTripCustomerChargeAmount3.setEnabled(true);
+            }
             mTripCustomerChargeAmount2.setValue(mTrip.getAdHocChargeCost2());
             mTripCustomerChargeAmount3.setValue(mTrip.getAdHocChargeCost3());
             mTaxAmount.setValue(mTrip.getTaxCost());
@@ -1094,15 +1110,17 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         });
 
         // 16 - adhoc charge description 1
-        mTripCustomerCharge1 = (EditText) rootView.findViewById(R.id.etCustomerCharge1);
+        mTripCustomerCharge1 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge1);
+
 
 
         // 17 - adhoc charge description 2
-        mTripCustomerCharge2 = (EditText) rootView.findViewById(R.id.etCustomerCharge2);
+        mTripCustomerCharge2 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge2);
 
 
         // 18 - adhoc charge description 3
-        mTripCustomerCharge3 = (EditText) rootView.findViewById(R.id.etCustomerCharge3);
+        mTripCustomerCharge3 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge3);
+
 
         // 19 - adhoc charge amount 1
         mTripCustomerChargeAmount1 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount1);
@@ -1114,6 +1132,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 }
             }
         });
+        mTripCustomerChargeAmount1.setEnabled(false);
+        mTripCustomerCharge1.setCurrencyField(mTripCustomerChargeAmount1);
 
         // 20 - adhoc charge amount 2
         mTripCustomerChargeAmount2 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount2);
@@ -1125,6 +1145,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 }
             }
         });
+        mTripCustomerChargeAmount2.setEnabled(false);
+        mTripCustomerCharge2.setCurrencyField(mTripCustomerChargeAmount2);
 
         // 21 - adhoc charge amount 3
         mTripCustomerChargeAmount3 = (EditTextCurrency) rootView.findViewById(R.id.etCustomerChargeAmount3);
@@ -1136,6 +1158,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 }
             }
         });
+        mTripCustomerCharge3.setCurrencyField(mTripCustomerChargeAmount3);
+        mTripCustomerChargeAmount3.setEnabled(false);
 
         // 22 - tax button config
         mTaxButton = (Button) rootView.findViewById(R.id.btCalcTax);

@@ -2,12 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view_filter"
+        android:padding="16dp"
+        card_view:cardBackgroundColor="@color/colorPrimary"
+        card_view:cardElevation="16dp"
+        android:onClick="startActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvFilterDetails"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/white"
+            android:layout_margin="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.CardView>
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/card_view_filter"
         android:id="@+id/trip_list_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

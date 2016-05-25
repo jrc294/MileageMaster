@@ -55,37 +55,4 @@ public class EditTextCurrency extends EditText {
 		mValue = Double.parseDouble(this.getText().toString().replace(Currency.getInstance(Locale.getDefault()).getSymbol(),"").replace(",",""));
 		this.setText(fmt.format(mValue).toString());
 	}
-
-	/*public void formatCharge(boolean isCurrency) {
-		if (this.getText().length() > 0) {
-			this.setText(this.getText().toString()
-					.replace(Util.getCurrency(), "").replace(",", ""));
-			value = Double.valueOf(this.getText().toString());
-			if ((isCurrency) || (isLessThanTwoDPS())) {
-				NumberFormat nf = NumberFormat.getCurrencyInstance();
-				this.setText(nf.format(value));
-			} else {
-				DecimalFormat df = new DecimalFormat("#.####");
-				this.setText(Util.getCurrency()
-						+ df.format(Double.parseDouble(this.getText()
-								.toString()
-								.replace(Util.getCurrency(), ""))));
-			}
-		} else {
-			value = 0.00;
-		}
-	}
-
-	private boolean isLessThanTwoDPS() {
-		// 1 - Get the length of the string
-		boolean ret = false;
-		String myText = this.getText().toString();
-		int myLength = myText.length();
-
-		int dpPos = myText.indexOf(".", 0);
-		if ((myLength - dpPos) < 3) {
-			ret = true;
-		}
-		return ret;
-	}*/
 }

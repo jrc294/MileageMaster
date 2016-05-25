@@ -1,8 +1,10 @@
 package com.aspiration.mileagemaster;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +22,7 @@ import com.aspiration.mileagemaster.data.TripContract;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ClientListActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ClientListActivityFragment extends Fragment implements TabFragment, LoaderManager.LoaderCallbacks<Cursor> {
 
     RecyclerView mRecyclerView;
     private static final int CLIENT_LOADER = 1;
@@ -73,4 +75,8 @@ public class ClientListActivityFragment extends Fragment implements LoaderManage
     }
 
 
+    @Override
+    public void refresh(Intent data) {
+
+    }
 }

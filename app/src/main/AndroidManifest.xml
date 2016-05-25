@@ -77,9 +77,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aspiration.mileagemaster.MainActivity" />
         </activity>
-        <activity android:name=".Search"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:label="@string/trip_filter"/>
+        <activity
+            android:name=".Search"
+            android:label="@string/trip_filter"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
+
 
 </manifest>

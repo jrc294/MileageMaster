@@ -29,6 +29,7 @@ public class TripProvider extends ContentProvider {
     private static final int TRIP_BY_ID = 121;
     private static final int CHARGE_ENTRY = 130;
     private static final int CHARGE_ENTRY_BY_ID = 131;
+    private static final int CHARGE_ENTRY_BY_RANGE = 132;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // _id = ?
@@ -58,7 +59,7 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/#", TRIP_BY_ID);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY, CHARGE_ENTRY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/#", CHARGE_ENTRY_BY_ID);
-        //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_CATEGORY);
+        matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/*", CHARGE_ENTRY_BY_RANGE);
 
         return matcher;
     }
@@ -121,6 +122,18 @@ public class TripProvider extends ContentProvider {
                         null);
                 break;
             }
+            case CHARGE_ENTRY_BY_RANGE: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "select sum(" + TripContract.TripChargeEntry.TABLE_NAME + "." + TripContract.TripChargeEntry.COLUMN_COST + ")" +
+                                " from " + TripContract.TripEntry.TABLE_NAME +
+                                ", " + TripContract.TripChargeEntry.TABLE_NAME +
+                                " where " + TripContract.TripEntry.TABLE_NAME +
+                                "." + TripContract.TripEntry._ID +
+                                " = " + TripContract.TripChargeEntry.TABLE_NAME +
+                                "." + TripContract.TripChargeEntry.COLUMN_TRIP_ID +
+                                " and " + selection, selectionArgs, null);
+                break;
+            }
             case CLIENT_USING_STANDARD_CHARGE_ID: {
                 String id = TripContract.ClientEntry.getStandardChargeFromClient(uri);
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -137,11 +150,11 @@ public class TripProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         TripContract.TripEntry.TABLE_NAME,
                         projection,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
-                        null,
-                        null,
-                        null);
+                        TripContract.TripEntry.COLUMN_DATE_TIME);
                 break;
             }
             case TRIP_BY_ID: {

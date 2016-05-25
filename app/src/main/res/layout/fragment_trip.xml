@@ -201,7 +201,7 @@
             android:layout_toEndOf="@+id/imgCharge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <com.aspiration.mileagemaster.EditTextAdHocCharge
                 android:id="@+id/etCustomerCharge1"
                 android:layout_weight="0.9"
                 android:singleLine="true"
@@ -225,7 +225,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <com.aspiration.mileagemaster.EditTextAdHocCharge
                 android:id="@+id/etCustomerCharge2"
                 android:layout_weight="0.9"
                 android:singleLine="true"
@@ -249,7 +249,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <com.aspiration.mileagemaster.EditTextAdHocCharge
                 android:id="@+id/etCustomerCharge3"
                 android:layout_weight="0.9"
                 android:singleLine="true"

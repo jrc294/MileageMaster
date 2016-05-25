@@ -15,7 +15,7 @@
   			android:layout_width="wrap_content"
   			android:layout_height="wrap_content"
   			android:textSize="15sp"
-  			android:text="@string/date_from"/>
+  			android:text="sw500dp"/>
         <Spinner
             android:id="@+id/spDateFrom"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
   			android:layout_width="wrap_content"
   			android:layout_height="wrap_content"
   			android:textSize="15sp"
-  			android:text="@string/date_to"/>
+  			android:text="Date To"/>
         <Spinner
             android:id="@+id/spDateTo"
             android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
   			android:layout_width="wrap_content"
   			android:layout_height="wrap_content"
   			android:textSize="15sp"
-  			android:text="@string/show"/>
+  			android:text="Show "/>
   		<Spinner 
   			android:id="@+id/spnCompleted"
   			android:layout_width="wrap_content"

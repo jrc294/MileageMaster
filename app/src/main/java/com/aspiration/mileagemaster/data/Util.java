@@ -1,6 +1,11 @@
 package com.aspiration.mileagemaster.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.Spinner;
+
+import com.aspiration.mileagemaster.R;
 
 import java.util.Currency;
 import java.util.Locale;
@@ -26,5 +31,25 @@ public class Util {
             }
         }
         return ret;
+    }
+
+    public static int setSpinnerSelection(Spinner spinner, String value) {
+
+        int ret = 0;
+        if (value != null) {
+            for (int i = 0; i < spinner.getCount(); i++) {
+                String spinner_value = (String) spinner.getItemAtPosition(i);
+                if (value.equals(spinner_value)) {
+                    ret = i;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public static String getDistanceUnit(Context c) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
+        return  settings.getString(c.getString(R.string.pref_distance_unit_key),c.getString(R.string.pref_distance_unit_default));
     }
 }

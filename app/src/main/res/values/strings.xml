@@ -51,4 +51,23 @@
     <string name="tax">Tax</string>
     <string name="filteroncustomer">Filter on client</string>
     <string name="trip_filter">Trip Filter</string>
+    <string name="search">Search</string>
+
+    <string name="home">HOME</string>
+    <string name="trips">TRIPS</string>
+    <string name="clients">CLIENTS</string>
+    <string name="charges">CHARGES</string>
+    <string name="completed_only">Completed Only</string>
+    <string name="incompleted_only">Incompleted Only</string>
+    <string name="all_trips">All Trips</string>
+    <string name="date_from">Date From</string>
+    <string name="date_to">Date To</string>
+    <string name="show">Show</string>
+    <string name="pref_distance_unit_default">mile</string>
+    <string name="pref_distance_unit_key" translatable="false">distanceUnit</string>
+    <string name="pref_distance_unit_label">Distance Unit</string>
+    <string name="kms">kms</string>
+    <string name="miles">miles</string>
+    <string name="cost_per">Cost per </string>
+    <string name="For">for</string>
 </resources>

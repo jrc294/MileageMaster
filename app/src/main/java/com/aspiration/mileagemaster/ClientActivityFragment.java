@@ -1,9 +1,11 @@
 package com.aspiration.mileagemaster;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aspiration.mileagemaster.data.TripContract;
@@ -39,6 +42,7 @@ public class ClientActivityFragment extends Fragment implements BackFragment, Lo
     EditTextCurrency mCostPerMile;
     EditText mTaxRate;
     Client mClient;
+    TextView mLabelCostPerMile;
 
     private static final String INITIAL_NAME = "initial_name";
     private static final String INITIAL_COST_PER_MILE = "initial_cost_per_mile";
@@ -74,6 +78,7 @@ public class ClientActivityFragment extends Fragment implements BackFragment, Lo
         mName = (EditText) viewroot.findViewById(R.id.etClientName);
         mCostPerMile = (EditTextCurrency) viewroot.findViewById(R.id.etClientMileageCost);
         mTaxRate = (EditText) viewroot.findViewById(R.id.etTaxRate);
+        mLabelCostPerMile = (TextView) viewroot.findViewById(R.id.tvCostPerMile);
 
         mTaxRate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -92,6 +97,10 @@ public class ClientActivityFragment extends Fragment implements BackFragment, Lo
         mCharge1.setAdapter(mAdapter);
         mCharge2.setAdapter(mAdapter);
         mCharge3.setAdapter(mAdapter);
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String distance_units =  settings.getString(getString(R.string.pref_distance_unit_key),getString(R.string.pref_distance_unit_default));
+        mLabelCostPerMile.setText(String.format("%1$s %2$s", getString(R.string.cost_per) , distance_units));
 
         return viewroot;
     }

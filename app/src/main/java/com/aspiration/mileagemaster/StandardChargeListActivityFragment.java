@@ -1,5 +1,6 @@
 package com.aspiration.mileagemaster;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import com.aspiration.mileagemaster.data.TripContract;
 /**
  * Created by jonathan.cook on 4/18/2016.
  */
-public class StandardChargeListActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StandardChargeListActivityFragment extends Fragment implements TabFragment, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int TRIP_LOADER = 0;
     RecyclerView mRecyclerView;
@@ -69,5 +70,11 @@ public class StandardChargeListActivityFragment extends Fragment implements Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public void refresh(Intent data) {
+
+
     }
 }
