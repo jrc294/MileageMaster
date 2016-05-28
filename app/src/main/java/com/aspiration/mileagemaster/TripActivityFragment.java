@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -93,6 +94,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     private static final String ADHOC_CHARGE_2 = "adhoc_charge_2";
     private static final String ADHOC_CHARGE_3 = "adhoc_charge_3";
     private static final String TAX = "tax";
+    private static final String STANDARD_CHARGE_DATA = "standard_charge_data";
     private static final String DATE_FORMAT = "dd-MMM-yyyy";
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd kk:mm:ss";
     private static final String TIME_FORMAT = "HH:mm";
@@ -136,6 +138,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     long mCharge3Id;
     long mClientId;
     Button mCalcTotal;
+    Map<Long, ArrayList<Long>> mClientStandardCharges = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,134 +171,6 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         }
 
         UpdateDate(mCalendar);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //String[] fromColumns = new String[]{TripContract.ClientEntry.COLUMN_NAME};
-        //int[] toViews = new int[]{android.R.id.text1};
-
-        /*
-
-        Cursor clientCursor = getActivity().getContentResolver().query(TripContract.ClientEntry.CONTENT_URI,
-                new String[]{TripContract.ClientEntry._ID, TripContract.ClientEntry.COLUMN_NAME},null,null,null,null);
-
-
-
-        SimpleCursorAdapter clientCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, clientCursor, fromColumns, toViews, 0);
-        clientCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mClient.setAdapter(clientCursorAdapter);
-
-        Cursor standardChargeCursor = getActivity().getContentResolver().query(TripContract.StandardChargeEntry.CONTENT_URI,
-                new String[]{TripContract.StandardChargeEntry._ID, TripContract.StandardChargeEntry.COLUMN_NAME, TripContract.StandardChargeEntry.COLUMN_COST},
-                null,null,null);
-
-        SimpleCursorAdapter standardChargeCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, standardChargeCursor, fromColumns, toViews,0);
-        standardChargeCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
-
-
-
-
-        //mTripChargeAmount1.setValue(mStandardChargeCosts.get(mCharge1.getSelectedItemId()));
-        //mTripChargeAmount2.setValue(mStandardChargeCosts.get(mCharge2.getSelectedItemId()));
-        //mTripChargeAmount3.setValue(mStandardChargeCosts.get(mCharge3.getSelectedItemId()));
-
-
-
-
-        /*mClient.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mTaxRate = getTaxRate();
-                mTaxButton.setText(String.format("%s @ %.2f%s", getResources().getString(R.string.calc_tax), mTaxRate, "%"));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        // Get any standard charges
-        /*Cursor standard_charge_cursor = getActivity().getContentResolver().query(TripContract.TripChargeEntry.buildTripChargeById(mId),
-                chargeColumns,
-                null,
-                null,
-                null,
-                null);
-        if (standard_charge_cursor.moveToFirst()) {
-            int standard_charge_count = 0;
-            int customer_charge_count = 0;
-            do {
-                int spinner_id = standard_charge_cursor.getInt(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID));
-                double charge_cost = standard_charge_cursor.getDouble(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_COST));
-                String description = standard_charge_cursor.getString(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_DESCRIPTION));
-                boolean is_tax = standard_charge_cursor.getInt(standard_charge_cursor.getColumnIndex(TripContract.TripChargeEntry.COLUMN_IS_TAX)) == 1 ? true : false;
-                if (is_tax) {
-                    mTaxAmount.setValue(charge_cost);
-                    mTaxAmount.formatAmount();
-                } else if (spinner_id > 0) {
-                        switch (standard_charge_count) {
-                            case 0:
-                                mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, spinner_id));
-                                mTripChargeAmount1.setValue(charge_cost);
-                                break;
-                            case 1:
-                                mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, spinner_id));
-                                mTripChargeAmount2.setValue(charge_cost);
-                                break;
-                            case 2:
-                                mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, spinner_id));
-                                mTripChargeAmount3.setValue(charge_cost);
-                                break;
-                        }
-                        standard_charge_count++;
-                    } else {
-                        switch (customer_charge_count) {
-                            case 0:
-                                mTripCustomerCharge1.setText(description);
-                                mTripCustomerChargeAmount1.setValue(charge_cost);
-                                break;
-                            case 1:
-                                mTripCustomerCharge2.setText(description);
-                                mTripCustomerChargeAmount2.setValue(charge_cost);
-                                break;
-                            case 2:
-                                mTripCustomerCharge3.setText(description);
-                                mTripCustomerChargeAmount3.setValue(charge_cost);
-                                break;
-                        }
-                        customer_charge_count++;
-                    }
-            } while (standard_charge_cursor.moveToNext());
-        }
-        standard_charge_cursor.close();
-    }*/
-
-
-
-
-
-
 
         return rootView;
     }
@@ -448,9 +323,11 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                     }
                     Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_LONG).show();
                 }
             }
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.trip_not_saved), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -602,7 +479,10 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                     uri,
                     new String[]{TripContract.ClientEntry._ID,
                             TripContract.ClientEntry.COLUMN_NAME,
-                            TripContract.ClientEntry.COLUMN_PRICE_PER_MILE}, null, null, null);
+                            TripContract.ClientEntry.COLUMN_PRICE_PER_MILE,
+                            TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID,
+                            TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID,
+                            TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID}, null, null, null);
         }
 
         if (id == TRIP_CHARGE_LOADER) {
@@ -642,6 +522,19 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 SimpleCursorAdapter clientCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, data, fromColumns, toViews, 0);
                 clientCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 mClient.setAdapter(clientCursorAdapter);
+                if (data.moveToFirst()) {
+                    do {
+                        ArrayList<Long> standard_charges_for_client = new ArrayList<>();
+                        long id = data.getLong(data.getColumnIndex(TripContract.ClientEntry._ID));
+                        long standard_charge_1 = data.getInt(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_1_ID));
+                        long standard_charge_2 = data.getInt(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID));
+                        long standard_charge_3 = data.getInt(data.getColumnIndex(TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID));
+                        standard_charges_for_client.add(standard_charge_1);
+                        standard_charges_for_client.add(standard_charge_2);
+                        standard_charges_for_client.add(standard_charge_3);
+                        mClientStandardCharges.put(id, standard_charges_for_client);
+                    } while (data.moveToNext());
+                }
             }
             isTripClientLoaderComplete = true;
             mClient.setSelection(Util.setSpinnerSelection(mClient, mClientId));
@@ -893,6 +786,21 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         }
     }
 
+    private void setClientStandardCharges(long id) {
+
+        ArrayList<Long> standard_charges = mClientStandardCharges.get(id);
+        int index = 0;
+        for (Long item : standard_charges) {
+            switch (index) {
+                case 0 : mCharge1.setSelection(Util.setSpinnerSelection(mCharge1, item)); break;
+                case 1 : mCharge2.setSelection(Util.setSpinnerSelection(mCharge2, item)); break;
+                case 2 : mCharge3.setSelection(Util.setSpinnerSelection(mCharge3, item)); break;
+            }
+            index++;
+        }
+
+    }
+
     private void elementConfig(View rootView) {
         // 1 -Date spinner config
         mDateField = (Spinner) rootView.findViewById(R.id.spTripDate);
@@ -927,6 +835,12 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mTaxRate = getTaxRate();
                 mTaxButton.setText(String.format("%s @ %.2f%s", getResources().getString(R.string.calc_tax), mTaxRate, "%"));
+                if (mId == null && (mClientId == 0 || mClientId != id)) {
+                    okToSelect1 = true;
+                    okToSelect2 = true;
+                    okToSelect3 = true;
+                    setClientStandardCharges(id);
+                }
                 mClientId = id;
             }
 

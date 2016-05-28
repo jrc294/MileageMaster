@@ -152,13 +152,27 @@ public class ClientActivityFragment extends Fragment implements BackFragment, Lo
 
     @Override
     public void deleteItem() {
-        int rows_deleted = getActivity().getContentResolver().delete(TripContract.ClientEntry.CONTENT_URI, TripContract.ClientEntry._ID + " = ?", new String[]{String.valueOf(mId)});
-        if (rows_deleted > 0) {
-            Toast.makeText(getActivity(), getString(R.string.client_deleted), Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+        if (deleteOk()) {
+            int rows_deleted = getActivity().getContentResolver().delete(TripContract.ClientEntry.CONTENT_URI, TripContract.ClientEntry._ID + " = ?", new String[]{String.valueOf(mId)});
+            if (rows_deleted > 0) {
+                Toast.makeText(getActivity(), getString(R.string.client_deleted), Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private boolean deleteOk() {
+        Cursor c = getActivity().getContentResolver().query(TripContract.TripEntry.buildTripClientCheckById(mId),
+                new String[] {TripContract.TripEntry._ID},
+                null,null,null,null);
+        if (c.moveToFirst()) {
+            Toast.makeText(getActivity(), R.string.client_is_in_use, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        c.close();
+        return true;
     }
 
     @Override

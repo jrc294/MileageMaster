@@ -19,6 +19,7 @@
             android:id="@+id/etClientName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="30"
             android:hint="@string/charge_name"/>
         <TextView
             android:id="@+id/tvCostPerMile"

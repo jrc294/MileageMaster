@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Mileage Master</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_standard_charge">StandardChargeActivity</string>
+    <string name="title_activity_standard_charge">Standard Charges</string>
     <string name="charge_name">Description</string>
     <string name="charge_cost">Cost</string>
     <string name="title_activity_standard_charge_list">StandardChargeListActivity</string>
@@ -18,15 +18,16 @@
     <string name="ok">OK</string>
     <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
     <string name="client_not_saved">Client not saved because the name is empty</string>
-    <string name="title_activity_client">ClientActivity</string>
+    <string name="title_activity_client">Clients</string>
     <string name="title_activity_client_list">ClientListActivity</string>
     <string name="tax_percent">0.00%</string>
     <string name="client_activity_enter_the_default_charge">Enter any default charges here</string>
     <string name="standard_charge_is_in_use">Delete failed as the charge is being used by %1$s</string>
+    <string name="standard_charge_is_in_use_by_trip">Delete failed as the charge is being used in one or more trips</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="client_is_in_use">Delete failed as the client is being used in one or more trips</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_trip">TripActivity</string>
+    <string name="title_activity_trip">Trip Details</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="from">From</string>
@@ -70,4 +71,5 @@
     <string name="miles">miles</string>
     <string name="cost_per">Cost per </string>
     <string name="For">for</string>
+    <string name="trip_not_saved">The trip failed to save. Please enter start and end locations</string>
 </resources>

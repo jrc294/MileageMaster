@@ -50,9 +50,11 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
         CardView cv_card_view = (CardView) holder.mView.findViewById(R.id.card_view_trip);
         cv_card_view.setTag(mDataset.getLong(0));
 
-        TextView tvTripDetails = (TextView) holder.mView.findViewById(R.id.tvTripDetails);
+        TextView tvTripDetails1 = (TextView) holder.mView.findViewById(R.id.tvTripDetails1);
+        TextView tvTripDetails2 = (TextView) holder.mView.findViewById(R.id.tvTripDetails2);
         String sDescription = mDataset.getString(1);
-        tvTripDetails.setText(sDescription);
+        tvTripDetails1.setText(sDescription.substring(0,sDescription.indexOf("\n")));
+        tvTripDetails2.setText(sDescription.substring(sDescription.indexOf("\n") + 1,sDescription.length()));
 
     }
 

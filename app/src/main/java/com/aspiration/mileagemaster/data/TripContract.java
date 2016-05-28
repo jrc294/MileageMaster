@@ -30,16 +30,29 @@ public class TripContract {
 
         public static final String PATH_TRIP = "trip";
 
+        public static final String PATH_TRIP_CLIENT = "client";
+
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
+
+        public static final Uri CONTENT_CLIENT_CHECK_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).appendPath(PATH_TRIP_CLIENT).build();
 
         // Method to build a Uri for querying an individual trip back
         public static Uri buildTripById(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static Uri buildTripClientCheckById(long id) {
+            return ContentUris.withAppendedId(CONTENT_CLIENT_CHECK_URI, id);
+        }
+
         // Method to return the ID of the trip from the Uri
         public static String getIDSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
+        }
+
+        // Method to return the ID of a standard charge being used by a client
+        public static String getClientIdForTrip(Uri uri) {
+            return uri.getPathSegments().get(2);
         }
     }
 
@@ -78,6 +91,7 @@ public class TripContract {
         public static String getStandardChargeFromClient(Uri uri) {
             return uri.getPathSegments().get(2);
         }
+
     }
 
     public static final class StandardChargeEntry implements BaseColumns {
@@ -112,7 +126,11 @@ public class TripContract {
 
         public static final String PATH_TRIP_CHARGES_FOR_CLIENT_RANGE = "trip_charges_for_client_range";
 
+        public static final String PATH_TRIP_CHARGES_FOR_TRIPS = "trip_charges_for_trips";
+
         public static final Uri CONTENT_CHARGES_FOR_CLIENT_RANGE_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).appendPath(PATH_TRIP_CHARGES_FOR_CLIENT_RANGE).build();
+
+        public static final Uri CONTENT_CHARGES_FOR_TRIPS = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).appendPath(PATH_TRIP_CHARGES_FOR_TRIPS).build();
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP_CHARGE_ENTRY).build();
 
@@ -122,6 +140,15 @@ public class TripContract {
 
         public static String getIDSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
+        }
+
+        // Method to return the ID of a standard charge being used by a client
+        public static String getStandardChargeIdForTrip(Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
+
+        public static Uri buildTripChargeTripById(long id) {
+            return ContentUris.withAppendedId(CONTENT_CHARGES_FOR_TRIPS, id);
         }
     }
 

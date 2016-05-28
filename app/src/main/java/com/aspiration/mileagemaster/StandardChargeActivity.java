@@ -165,6 +165,15 @@ public class StandardChargeActivity extends AppCompatActivity implements DeleteD
             return false;
         }
         c.close();
+
+        c = getContentResolver().query(TripContract.TripChargeEntry.buildTripChargeTripById(mId),
+                new String[] {TripContract.TripChargeEntry._ID},
+                null,null,null,null);
+        if (c.moveToFirst()) {
+            Toast.makeText(this, getString(R.string.standard_charge_is_in_use_by_trip), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        c.close();
         return true;
     }
 

@@ -27,9 +27,11 @@ public class TripProvider extends ContentProvider {
     private static final int CLIENT_USING_STANDARD_CHARGE_ID = 112;
     private static final int TRIP = 120;
     private static final int TRIP_BY_ID = 121;
+    private static final int TRIP_USING_CLIENT_ID = 122;
     private static final int CHARGE_ENTRY = 130;
     private static final int CHARGE_ENTRY_BY_ID = 131;
     private static final int CHARGE_ENTRY_BY_RANGE = 132;
+    private static final int CHARGE_ENTRY_FOR_TRIPS = 133;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // _id = ?
@@ -45,6 +47,10 @@ public class TripProvider extends ContentProvider {
                                                     TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_2_ID + " = ? OR " +
                                                     TripContract.ClientEntry.COLUMN_STANDARD_CHARGE_3_ID + " = ? ";
 
+    private static final String sTripClientId = TripContract.TripEntry.COLUMN_CLIENT_ID + " = ? ";
+
+    private static final String sTripStandardChargeIds = TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID + " = ? ";
+
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -57,9 +63,11 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.ClientEntry.PATH_CLIENT + "/*" + "/#", CLIENT_USING_STANDARD_CHARGE_ID);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP, TRIP);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/#", TRIP_BY_ID);
+        matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*" + "/#", TRIP_USING_CLIENT_ID);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY, CHARGE_ENTRY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/#", CHARGE_ENTRY_BY_ID);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/*", CHARGE_ENTRY_BY_RANGE);
+        matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/*" + "/#", CHARGE_ENTRY_FOR_TRIPS);
 
         return matcher;
     }
@@ -169,12 +177,36 @@ public class TripProvider extends ContentProvider {
                         null);
                 break;
             }
+            case TRIP_USING_CLIENT_ID: {
+                String id = TripContract.TripEntry.getClientIdForTrip(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripEntry.TABLE_NAME,
+                        projection,
+                        sTripClientId,
+                        new String[]{id},
+                        null,
+                        null,
+                        null);
+                break;
+            }
             case CHARGE_ENTRY_BY_ID: {
                 String id = TripContract.TripChargeEntry.getIDSettingFromUri(uri);
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         TripContract.TripChargeEntry.TABLE_NAME,
                         projection,
                         sTripChargeId,
+                        new String[]{id},
+                        null,
+                        null,
+                        null);
+                break;
+            }
+            case CHARGE_ENTRY_FOR_TRIPS: {
+                String id = TripContract.TripChargeEntry.getStandardChargeIdForTrip(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripChargeEntry.TABLE_NAME,
+                        projection,
+                        sTripStandardChargeIds,
                         new String[]{id},
                         null,
                         null,
