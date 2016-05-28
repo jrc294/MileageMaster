@@ -72,4 +72,5 @@
     <string name="cost_per">Cost per </string>
     <string name="For">for</string>
     <string name="trip_not_saved">The trip failed to save. Please enter start and end locations</string>
+    <string name="ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>
