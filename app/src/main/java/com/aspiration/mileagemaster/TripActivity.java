@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class TripActivity extends AppCompatActivity implements TripActivityFragment.DatePickerFragment.OnDateSelected, DeleteDialogFragment.NoticeDialogListener {
+public class TripActivity extends AppCompatActivity implements TripActivityFragment.DatePickerFragment.OnDateSelected, DeleteDialogFragment.NoticeDialogListener, TripSearchFragment.Callback {
 
     private static final String TRIPFRAGMENT_TAG = "TFTAG";
 
@@ -35,8 +35,19 @@ public class TripActivity extends AppCompatActivity implements TripActivityFragm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
+
+            Long id = getIntent().getExtras() != null ? getIntent().getExtras().getLong(TripListActivity.KEY_ID) : null;
+            Bundle arguments = new Bundle();
+
+            if (id != null) {
+                arguments.putLong(MainActivity.KEY_ID, id);
+            }
+
+            TripActivityFragment fragment = new TripActivityFragment();
+            fragment.setArguments(arguments);
+
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.trip_container, new TripActivityFragment(), TRIPFRAGMENT_TAG)
+                    .replace(R.id.trip_container, fragment, TRIPFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -93,5 +104,15 @@ public class TripActivity extends AppCompatActivity implements TripActivityFragm
         BackFragment back_fragment = (BackFragment) getSupportFragmentManager().findFragmentByTag(TRIPFRAGMENT_TAG);
         back_fragment.backPressed();
         super.onBackPressed();
+    }
+
+    @Override
+    public void setTwoPane(boolean twoPane) {
+
+    }
+
+    @Override
+    public boolean isTwoPane() {
+        return false;
     }
 }

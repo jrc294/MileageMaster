@@ -13,7 +13,9 @@
     <string name="trip_deleted">Trip deleted</string>
     <string name="error">Error</string>
     <string name="delete_item">Delete</string>
+    <string name="save_item">Save</string>
     <string name="dialog_deleted">OK to delete?</string>
+    <string name="dialog_save">Save changes?</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="standard_charge_not_saved">Standard charge not saved because the details were incomplete</string>
@@ -73,4 +75,5 @@
     <string name="For">for</string>
     <string name="trip_not_saved">The trip failed to save. Please enter start and end locations</string>
     <string name="ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="select_a_trip_to_delete">Please select a trip to delete</string>
 </resources>

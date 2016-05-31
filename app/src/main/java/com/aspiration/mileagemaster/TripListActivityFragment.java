@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aspiration.mileagemaster.data.StandardListAdapter;
 import com.aspiration.mileagemaster.data.TripContract;
@@ -34,13 +33,14 @@ import java.util.Locale;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class TripListActivityFragment extends Fragment implements TabFragment, LoaderManager.LoaderCallbacks<Cursor>{
+public class TripListActivityFragment extends Fragment implements MasterDetailFragment, LoaderManager.LoaderCallbacks<Cursor>{
 
     RecyclerView mRecyclerView;
     private static final int TRIP_LOADER = 2;
     private static final int CHARGES_LOADER = 3;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String DATE_FORMAT_SHORT = "MMM-dd";
+    private static final String SELECTED_TRIP = "selected_trip";
     long mClientId;
     boolean mFilterOnClient;
     String mCompletedStatus;
@@ -51,6 +51,7 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
     int mMilesTraveled;
     double mMileageCharge;
     double mChargesCharge;
+    int mSelectedTrip = -1;
 
     public TripListActivityFragment() {
     }
@@ -78,6 +79,7 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
             mCalendarFrom = (Calendar) savedInstanceState.getSerializable(Search.DATE_FROM);
             mCalendarTo = (Calendar) savedInstanceState.getSerializable(Search.DATE_TO);
             mClientName = savedInstanceState.getString(Search.CLIENT_NAME);
+            mSelectedTrip = savedInstanceState.getInt(SELECTED_TRIP);
         }
 
         updateFilterValues();
@@ -101,8 +103,12 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
         outState.putSerializable(Search.DATE_FROM, mCalendarFrom);
         outState.putSerializable(Search.DATE_TO, mCalendarTo);
         outState.putString(Search.CLIENT_NAME, mClientName);
+        int selected_trip = ((TripListAdapter) mRecyclerView.getAdapter()).getTrip();
+        outState.putInt(SELECTED_TRIP, selected_trip);
         super.onSaveInstanceState(outState);
     }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
@@ -168,7 +174,8 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
         if (loader.getId() == TRIP_LOADER) {
             mMileageCharge = 0;
             mMilesTraveled = 0;
-            mRecyclerView.setAdapter(new TripListAdapter(data));
+            mRecyclerView.setAdapter(new TripListAdapter(data, (TripListAdapter.Callback) getActivity()));
+            ((TripListAdapter) mRecyclerView.getAdapter()).setTrip(mSelectedTrip);
 
             if (data.moveToFirst()) {
                 do {
@@ -201,6 +208,7 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
         mCalendarFrom = (Calendar) data.getExtras().getSerializable(Search.DATE_FROM);
         mCalendarTo = (Calendar) data.getExtras().getSerializable(Search.DATE_TO);
         mClientName = data.getExtras().getString(Search.CLIENT_NAME);
+        mSelectedTrip = -1;
         updateFilterValues();
         getActivity().getSupportLoaderManager().restartLoader(TRIP_LOADER, null, this);
         getActivity().getSupportLoaderManager().restartLoader(CHARGES_LOADER, null, this);
@@ -221,4 +229,20 @@ public class TripListActivityFragment extends Fragment implements TabFragment, L
         filter_details += String.format(", %1$s %2$s", fmt.format(mMileageCharge + mChargesCharge), "charged");
         mTextViewFilter.setText(filter_details);
     }
+
+    @Override
+    public void reloadDetail(long id) {
+        mSelectedTrip = ((TripListAdapter) mRecyclerView.getAdapter()).getTrip();
+    }
+
+    @Override
+    public void updateCalendar(Calendar calendar) {
+
+    }
+
+    @Override
+    public void deleteItem() {
+
+    }
+
 }

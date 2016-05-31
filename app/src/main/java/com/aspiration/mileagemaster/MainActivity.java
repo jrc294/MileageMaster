@@ -1,29 +1,32 @@
 package com.aspiration.mileagemaster;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import com.aspiration.mileagemaster.data.TripListAdapter;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, TripSearchFragment.Callback,
+        TripActivityFragment.DatePickerFragment.OnDateSelected, DeleteDialogFragment.NoticeDialogListener, TripListAdapter.Callback {
 
     private TabLayout tabLayout;
     private ViewPager mViewPager;
@@ -38,12 +41,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     public static final String KEY_ID = "id";
     private static final int ACTIVITY_SEARCH = 1;
-    private static final String TAB_MAP = "tab_map";
+    private static final String SEARCH_FRAGMENT = "search_fragment";
+    public boolean mTwoPane;
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
 
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(view);
+                startactivity(view);
             }
         });
 
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager.setOffscreenPageLimit(2);
         final PagerAdapter adapter = new PagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         mViewPager.setAdapter(adapter);
@@ -141,7 +142,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                 case 0:
                     tab = HomeFragment.newInstance(null,null); break;
                 case 1:
-                    tab = new TripListActivityFragment(); break;
+                    tab = new TripSearchFragment();
+                    break;
                 case 2:
                     tab = new ClientListActivityFragment(); break;
                 case 3:
@@ -193,35 +195,36 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         return super.onOptionsItemSelected(item);
     }
 
-    public void startActivity(View view) {
+    public void startactivity(View view) {
         Intent i = null;
         switch (mCurrent_tab) {
             case HOME : i = new Intent(this, TripActivity.class);break;
-            case MY_TRIPS: if (view.getTag() == null) {
-                Bundle args = new Bundle();
-                args.putBoolean(Search.INCLUDE_CLIENT, mSearchFilterOnClient);
-                args.putSerializable(Search.DATE_FROM, mSearchFromDate);
-                args.putSerializable(Search.DATE_TO, mSearchToDate);
-                args.putLong(Search.CLIENT_ID, mClientId);
-                args.putString(Search.COMPLETED_STATUS, mCompletedStatus);
-                i = new Intent(this, Search.class);
-                i.putExtras(args);
-            } else {
-                i = new Intent(this, TripActivity.class);
-            }
-            break;
+            case MY_TRIPS: i = new Intent(this, TripActivity.class); break;
             case CLIENTS : i = new Intent(this, ClientActivity.class); break;
             case CHARGES : i = new Intent(this, StandardChargeActivity.class); break;
         }
-        if (view.getTag() != null) {
-            i.putExtra(KEY_ID, (Long) view.getTag());
-        }
-        if (mCurrent_tab == Tab.MY_TRIPS && view.getTag() == null) {
-            startActivityForResult(i, ACTIVITY_SEARCH);
+
+        if (mCurrent_tab == Tab.MY_TRIPS) {
+            if (view.getTag() != null && view.getTag().toString().equals("filter")) {
+                startSearchActivity();
+            } else {
+                if (view.getTag() != null) {
+                    i.putExtra(KEY_ID, (Long) view.getTag());
+                }
+                if (mTwoPane && view.getTag() != null) {
+                    ((MasterDetailFragment) mPageReferenceMap.get(1)).reloadDetail((Long) view.getTag());
+                } else {
+                    startActivity(i);
+                }
+            }
         } else {
+            if (view.getTag() != null) {
+                i.putExtra(KEY_ID, (Long) view.getTag());
+            }
             startActivity(i);
         }
     }
+
 
     private void setCurrentTab(int current_tab) {
         switch (current_tab) {
@@ -230,6 +233,18 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
             case 2 : mCurrent_tab = Tab.CLIENTS; break;
             case 3 : mCurrent_tab = Tab.CHARGES; break;
         }
+    }
+
+    public void startSearchActivity() {
+        Bundle args = new Bundle();
+        args.putBoolean(Search.INCLUDE_CLIENT, mSearchFilterOnClient);
+        args.putSerializable(Search.DATE_FROM, mSearchFromDate);
+        args.putSerializable(Search.DATE_TO, mSearchToDate);
+        args.putLong(Search.CLIENT_ID, mClientId);
+        args.putString(Search.COMPLETED_STATUS, mCompletedStatus);
+        Intent i = new Intent(this, Search.class);
+        i.putExtras(args);
+        startActivityForResult(i, ACTIVITY_SEARCH);
     }
 
     @Override
@@ -250,5 +265,41 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         mCompletedStatus = data.getExtras().getString(Search.COMPLETED_STATUS);
         mSearchClientName = data.getExtras().getString(Search.CLIENT_NAME);
         myFragment.refresh(data);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+    }
+
+    @Override
+    public boolean isTwoPane() {
+        return mTwoPane;
+    }
+
+    @Override
+    public void onDateSelected(Calendar calendar, String tag) {
+        ((MasterDetailFragment) mPageReferenceMap.get(1)).updateCalendar(calendar);
+    }
+
+    @Override
+    public Calendar getCurrentlySelectedDate(String tag) {
+        return null;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        MasterDetailFragment fragment = ((MasterDetailFragment)mPageReferenceMap.get(1));
+        fragment.deleteItem();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
     }
 }

@@ -21,14 +21,14 @@ public class TripListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             TripListActivityFragment fragment = new TripListActivityFragment();
             fragmentTransaction.add(R.id.trip_list_container, fragment);
             fragmentTransaction.commit();
-        }
+        }*/
     }
 
 }

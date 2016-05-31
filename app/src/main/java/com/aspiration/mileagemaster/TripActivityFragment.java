@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -139,6 +140,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     long mClientId;
     Button mCalcTotal;
     Map<Long, ArrayList<Long>> mClientStandardCharges = new HashMap<>();
+    boolean bTripChanged = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -147,7 +149,13 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         elementConfig(rootView);
 
-        mId = getActivity().getIntent().getExtras() != null ? getActivity().getIntent().getExtras().getLong(TripListActivity.KEY_ID) : null;
+
+        Long id = getArguments() != null ? getArguments().getLong(MainActivity.KEY_ID) : 0;
+
+        //getActivity().getSupportLoaderManager().destroyLoader(TRIP_CHARGES_LOADER);
+        //getActivity().getSupportLoaderManager().destroyLoader(TRIP_LOADER);
+
+        mId = id == 0 ? null : id;
 
         if (savedInstanceState != null) {
             mCalendar = (Calendar) savedInstanceState.getSerializable(DATE);
@@ -183,6 +191,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         if (savedInstanceState == null) {
             if (mId != null) {
+                getActivity().getSupportLoaderManager().destroyLoader(TRIP_CHARGES_LOADER);
+                getActivity().getSupportLoaderManager().destroyLoader(TRIP_LOADER);
                 getActivity().getSupportLoaderManager().initLoader(TRIP_CHARGES_LOADER, null, this);
                 getActivity().getSupportLoaderManager().initLoader(TRIP_LOADER, null, this);
             }
@@ -209,6 +219,11 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
     }
 
+    @Override
+    public void onDestroyView() {
+        save();
+        super.onDestroyView();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -245,101 +260,122 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         return mCalendar;
     }
 
-    @Override
-    public void backPressed() {
-        getActivity().getSupportLoaderManager().destroyLoader(TRIP_CHARGES_LOADER);
-        getActivity().getSupportLoaderManager().destroyLoader(TRIP_LOADER);
-        isTripClientLoaderComplete = false;
-        isTripLoaderComplete = false;
-        isTripChargeLoaderComplete = false;
-        isTripChargesComplete = false;
-        // Insert on back press{
-        mTripCustomerChargeAmount1.formatAmount();
-        mTripCustomerChargeAmount2.formatAmount();
-        mTripCustomerChargeAmount3.formatAmount();
-        mTripChargeAmount1.formatAmount();
-        mTripChargeAmount2.formatAmount();
-        mTripChargeAmount3.formatAmount();
-        mTaxAmount.formatAmount();
-        mMilesCost.formatAmount();
-        calcTotals();
+    public void save() {
+        if (bTripChanged) {
+            getActivity().getSupportLoaderManager().destroyLoader(TRIP_CHARGES_LOADER);
+            getActivity().getSupportLoaderManager().destroyLoader(TRIP_LOADER);
+            isTripClientLoaderComplete = false;
+            isTripLoaderComplete = false;
+            isTripChargeLoaderComplete = false;
+            isTripChargesComplete = false;
+            // Insert on back press{
+            mTripCustomerChargeAmount1.formatAmount();
+            mTripCustomerChargeAmount2.formatAmount();
+            mTripCustomerChargeAmount3.formatAmount();
+            mTripChargeAmount1.formatAmount();
+            mTripChargeAmount2.formatAmount();
+            mTripChargeAmount3.formatAmount();
+            mTaxAmount.formatAmount();
+            mMilesCost.formatAmount();
+            calcTotals();
 
-        if (mMilesTravelled.getText().length() == 0) {
-            mMilesTravelled.setText("0");
-        }
+            if (mMilesTravelled.getText().length() == 0) {
+                mMilesTravelled.setText("0");
+            }
 
-        if (!mFrom.getText().toString().equals("") && !mTo.getText().toString().equals("")) {
+            if (!mFrom.getText().toString().equals("") && !mTo.getText().toString().equals("")) {
 
-            SimpleDateFormat fmt = new SimpleDateFormat(DATE_TIME_FORMAT);
-            String trip_date_time = fmt.format(mCalendar.getTime());
+                SimpleDateFormat fmt = new SimpleDateFormat(DATE_TIME_FORMAT);
+                String trip_date_time = fmt.format(mCalendar.getTime());
 
-            String sJourneyDateTime = String.format(
-                    "%tb %1$te, %1$tl:%1$tM %1$Tp", mCalendar);
+                String sJourneyDateTime = String.format(
+                        "%tb %1$te, %1$tl:%1$tM %1$Tp", mCalendar);
 
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String distance_units =  settings.getString(getString(R.string.pref_distance_unit_key),getString(R.string.pref_distance_unit_default));
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String distance_units = settings.getString(getString(R.string.pref_distance_unit_key), getString(R.string.pref_distance_unit_default));
 
-            String sDescription = sJourneyDateTime + " - " + ((TextView)mClient.getSelectedView()).getText().toString()
-                    + "\n" + mFrom.getText().toString() + " to " + mTo.getText().toString()
-                    + "\n" + mMilesTravelled.getText().toString() + " "
-                    + (distance_units.toLowerCase().equals(getString(R.string.pref_distance_unit_default)) ? getString(R.string.miles) : getString(R.string.kms)) +
-                    " - " + mTotalCostAmount.getText().toString();
+                String sDescription = sJourneyDateTime + " - " + ((TextView) mClient.getSelectedView()).getText().toString()
+                        + "\n" + mFrom.getText().toString() + " to " + mTo.getText().toString()
+                        + "\n" + mMilesTravelled.getText().toString() + " "
+                        + (distance_units.toLowerCase().equals(getString(R.string.pref_distance_unit_default)) ? getString(R.string.miles) : getString(R.string.kms)) +
+                        " - " + mTotalCostAmount.getText().toString();
 
-            ContentValues cvTrip = new ContentValues();
-            cvTrip.put(TripContract.TripEntry.COLUMN_STARTING_PLACE, mFrom.getText().toString());
-            cvTrip.put(TripContract.TripEntry.COLUMN_ENDING_PLACE, mTo.getText().toString());
-            cvTrip.put(TripContract.TripEntry.COLUMN_DATE_TIME, trip_date_time);
-            cvTrip.put(TripContract.TripEntry.COLUMN_CLIENT_ID, mClient.getSelectedItemId());
-            cvTrip.put(TripContract.TripEntry.COLUMN_DISTANCE, mMilesTravelled.getText().toString());
-            cvTrip.put(TripContract.TripEntry.COLUMN_COST, mMilesCost.getValue());
-            cvTrip.put(TripContract.TripEntry.COLUMN_COMPLETE, mIsComplete.isChecked());
-            cvTrip.put(TripContract.TripEntry.COLUMN_NOTES, mNotes.getText().toString());
-            cvTrip.put(TripContract.TripEntry.COLUMN_DESCRIPTION, sDescription);
+                ContentValues cvTrip = new ContentValues();
+                cvTrip.put(TripContract.TripEntry.COLUMN_STARTING_PLACE, mFrom.getText().toString());
+                cvTrip.put(TripContract.TripEntry.COLUMN_ENDING_PLACE, mTo.getText().toString());
+                cvTrip.put(TripContract.TripEntry.COLUMN_DATE_TIME, trip_date_time);
+                cvTrip.put(TripContract.TripEntry.COLUMN_CLIENT_ID, mClient.getSelectedItemId());
+                cvTrip.put(TripContract.TripEntry.COLUMN_DISTANCE, mMilesTravelled.getText().toString());
+                cvTrip.put(TripContract.TripEntry.COLUMN_COST, mMilesCost.getValue());
+                cvTrip.put(TripContract.TripEntry.COLUMN_COMPLETE, mIsComplete.isChecked());
+                cvTrip.put(TripContract.TripEntry.COLUMN_NOTES, mNotes.getText().toString());
+                cvTrip.put(TripContract.TripEntry.COLUMN_DESCRIPTION, sDescription);
 
-            if (mId == null) {
-                Uri uri = getActivity().getContentResolver().insert(TripContract.TripEntry.CONTENT_URI, cvTrip);
-                String trip_id = TripContract.TripEntry.getIDSettingFromUri(uri);
-                if (!trip_id.equals(-1) ) {
-                    if (saveCharges(trip_id)) {
-                        Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
+                if (mId == null) {
+                    Uri uri = getActivity().getContentResolver().insert(TripContract.TripEntry.CONTENT_URI, cvTrip);
+                    String trip_id = TripContract.TripEntry.getIDSettingFromUri(uri);
+                    if (!trip_id.equals(-1)) {
+                        if (saveCharges(trip_id)) {
+                            Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+                    int rows_updated = getActivity().getContentResolver().update(TripContract.TripEntry.CONTENT_URI, cvTrip, TripContract.TripEntry._ID + " = ?", new String[]{String.valueOf(mId)});
+                    if (rows_updated > 0) {
+                        // Now save the charges
+                        //
+                        // 1 - Delete all existing charges
+                        int rows_deleted = getActivity().getContentResolver().delete(TripContract.TripChargeEntry.CONTENT_URI, TripContract.TripChargeEntry.COLUMN_TRIP_ID + " = ?", new String[]{String.valueOf(mId)});
+                        // 2 - Save the charges
+                        if (saveCharges(String.valueOf(mId))) {
+                            Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+                        }
+                        Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_LONG).show();
+                    }
                 }
             } else {
-                int rows_updated = getActivity().getContentResolver().update(TripContract.TripEntry.CONTENT_URI, cvTrip, TripContract.TripEntry._ID + " = ?", new String[]{String.valueOf(mId)});
-                if (rows_updated > 0) {
-                    // Now save the charges
-                    //
-                    // 1 - Delete all existing charges
-                    int rows_deleted = getActivity().getContentResolver().delete(TripContract.TripChargeEntry.CONTENT_URI, TripContract.TripChargeEntry.COLUMN_TRIP_ID + " = ?", new String[]{String.valueOf(mId)});
-                    // 2 - Save the charges
-                    if (saveCharges(String.valueOf(mId))) {
-                        Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(getActivity(), getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(getActivity(), getString(R.string.trip_not_saved), Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.trip_not_saved), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
+    public void backPressed() {
+
+    }
+
+    @Override
     public void deleteItem() {
-        int rows_deleted = getActivity().getContentResolver().delete(TripContract.TripEntry.CONTENT_URI, TripContract.TripEntry._ID + " = ?", new String[]{String.valueOf(mId)});
-        if (rows_deleted > 0) {
-            Toast.makeText(getActivity(), getString(R.string.trip_deleted), Toast.LENGTH_SHORT).show();
-            getActivity().finish();
+        if (mId != null) {
+            getActivity().getSupportLoaderManager().destroyLoader(TRIP_CHARGES_LOADER);
+            getActivity().getSupportLoaderManager().destroyLoader(TRIP_LOADER);
+            int rows_deleted = getActivity().getContentResolver().delete(TripContract.TripEntry.CONTENT_URI, TripContract.TripEntry._ID + " = ?", new String[]{String.valueOf(mId)});
+            if (rows_deleted > 0) {
+                Toast.makeText(getActivity(), getString(R.string.trip_deleted), Toast.LENGTH_SHORT).show();
+                if (!((TripSearchFragment.Callback) getActivity()).isTwoPane()) {
+                    getActivity().finish();
+                } else {
+                    FragmentTransaction trans = getActivity().getSupportFragmentManager().beginTransaction();
+                    trans.remove(this).commitAllowingStateLoss();
+                }
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.select_a_trip_to_delete), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void saveItem() {
+        save();
     }
 
     @Override
@@ -704,11 +740,12 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             implements TimePickerDialog.OnTimeSetListener {
 
         DatePickerFragment.OnDateSelected mCallback;
-        Calendar mCalendar = Calendar.getInstance();
+        Calendar mCal;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current time as the default values for the picker
+            mCal = Calendar.getInstance();
             final Calendar c = Calendar.getInstance();
             int hour = c.get(Calendar.HOUR_OF_DAY);
             int minute = c.get(Calendar.MINUTE);
@@ -720,8 +757,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            mCalendar.set(mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH),hourOfDay,minute);
-            mCallback.onDateSelected(mCalendar, this.getTag());
+            mCal.set(mCal.get(Calendar.YEAR),mCal.get(Calendar.MONTH),mCal.get(Calendar.DAY_OF_MONTH),hourOfDay,minute);
+            mCallback.onDateSelected(mCal, this.getTag());
         }
 
         @Override
@@ -732,7 +769,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             // the callback interface. If not, it throws an exception
             try {
                 mCallback = (DatePickerFragment.OnDateSelected) activity;
-                mCalendar = mCallback.getCurrentlySelectedDate(this.getTag());
+                mCal = mCallback.getCurrentlySelectedDate(this.getTag());
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement OnDateSelected");
@@ -744,7 +781,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             implements DatePickerDialog.OnDateSetListener {
 
         OnDateSelected mCallback;
-        Calendar mCalendar = Calendar.getInstance();
+        Calendar mCal;
 
         public interface OnDateSelected {
             public void onDateSelected(Calendar calendar, String tag);
@@ -754,9 +791,10 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
-            int year = mCalendar.get(Calendar.YEAR);
-            int month = mCalendar.get(Calendar.MONTH);
-            int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+            mCal = Calendar.getInstance();
+            int year = mCal.get(Calendar.YEAR);
+            int month = mCal.get(Calendar.MONTH);
+            int day = mCal.get(Calendar.DAY_OF_MONTH);
 
             // Create a new instance of DatePickerDialog and return it
             DatePickerDialog dpd = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog, this, year, month, day);
@@ -766,8 +804,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mCalendar.set(year,monthOfYear,dayOfMonth);
-            mCallback.onDateSelected(mCalendar, this.getTag());
+            mCal.set(year,monthOfYear,dayOfMonth);
+            mCallback.onDateSelected(mCal, this.getTag());
         }
 
         @Override
@@ -778,7 +816,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             // the callback interface. If not, it throws an exception
             try {
                 mCallback = (OnDateSelected) activity;
-                mCalendar = mCallback.getCurrentlySelectedDate(this.getTag());
+                mCal = mCallback.getCurrentlySelectedDate(this.getTag());
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement OnDateSelected");
@@ -812,6 +850,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     showDatePickerDialog();
                 }
+                bTripChanged = true;
                 return true;
             }
         });
@@ -824,6 +863,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     showTimePickerDialog();
                 }
+                bTripChanged = true;
                 return true;
             }
         });
@@ -849,6 +889,14 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
             }
         });
+        mClient.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 4 - Standard charges 1 config
         mCharge1 = (Spinner) rootView.findViewById(R.id.spTripCharge1);
@@ -868,6 +916,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (okToSelect1) {
                     mTripChargeAmount1.setValue(mStandardChargeCosts.get(mCharge1.getSelectedItemId()));
                     calcTotals();
+                    bTripChanged = true;
                 }
 
                 mCharge1Id = id;
@@ -905,6 +954,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (okToSelect2) {
                     mTripChargeAmount2.setValue(mStandardChargeCosts.get(mCharge2.getSelectedItemId()));
                     calcTotals();
+                    bTripChanged = true;
                 }
 
                 mCharge2Id = id;
@@ -941,6 +991,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (okToSelect3) {
                     mTripChargeAmount3.setValue(mStandardChargeCosts.get(mCharge3.getSelectedItemId()));
                     calcTotals();
+                    bTripChanged = true;
                 }
                 okToSelect3 = false;
 
@@ -961,9 +1012,23 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         // 7 - From
         mFrom = (EditText) rootView.findViewById(R.id.etFrom);
+        mFrom.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 8 - To
         mTo = (EditText) rootView.findViewById(R.id.etTo);
+        mTo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 9 - Miles travelled config
         mMilesTravelled = (EditText) rootView.findViewById(R.id.etMilesTravelled);
@@ -980,15 +1045,45 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 }
             }
         });
+        mMilesTravelled.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 10 - Miles cost config
         mMilesCost = (EditTextCurrency) rootView.findViewById(R.id.etMileageCost);
+        mMilesCost.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 11 - Is Complete
         mIsComplete = (CheckBox) rootView.findViewById(R.id.cbTripComplete);
+        mIsComplete.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
+
 
         // 12 - Notes
         mNotes = (EditText) rootView.findViewById(R.id.etNotes);
+        mNotes.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
+
 
         // 13 - Standard charge amount 1
         mTripChargeAmount1 = (EditTextCurrency) rootView.findViewById(R.id.edTripChargeAmount1);
@@ -998,6 +1093,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
 
@@ -1009,6 +1105,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
 
@@ -1020,20 +1117,40 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
 
         // 16 - adhoc charge description 1
         mTripCustomerCharge1 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge1);
-
-
+        mTripCustomerCharge1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
         // 17 - adhoc charge description 2
         mTripCustomerCharge2 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge2);
+        mTripCustomerCharge2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
 
         // 18 - adhoc charge description 3
         mTripCustomerCharge3 = (EditTextAdHocCharge) rootView.findViewById(R.id.etCustomerCharge3);
+        mTripCustomerCharge3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
 
         // 19 - adhoc charge amount 1
@@ -1044,6 +1161,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
         mTripCustomerChargeAmount1.setEnabled(false);
@@ -1057,6 +1175,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
         mTripCustomerChargeAmount2.setEnabled(false);
@@ -1070,6 +1189,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 if (!hasFocus) {
                     calcTotals();
                 }
+                bTripChanged = true;
             }
         });
         mTripCustomerCharge3.setCurrencyField(mTripCustomerChargeAmount3);
@@ -1086,6 +1206,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
                 mTaxAmount.setText(String.valueOf(tax_amount));
                 mTaxAmount.formatAmount();
                 calcTotals();
+                bTripChanged = true;
             }
         });
 
@@ -1094,9 +1215,14 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
         // 24 - tax amount config
         mTaxAmount = (EditTextCurrency) rootView.findViewById(R.id.etTaxAmount);
+        mTaxAmount.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bTripChanged = true;
+                return false;
+            }
+        });
 
-        // 3=25 - Notes config
-        mNotes = (EditText) rootView.findViewById(R.id.etNotes);
 
         mCalcTotal = (Button) rootView.findViewById(R.id.btnTotalCostLabel);
         mCalcTotal.setOnClickListener(new View.OnClickListener() {
@@ -1104,6 +1230,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             public void onClick(View v) {
                 mTotalCostAmount.requestFocus();
                 calcTotals();
+                bTripChanged = true;
             }
         });
     }
