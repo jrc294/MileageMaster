@@ -36,9 +36,15 @@ public class TripContract {
 
         public static final Uri CONTENT_CLIENT_CHECK_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).appendPath(PATH_TRIP_CLIENT).build();
 
+        public static final Uri CONTENT_CLIENT_MONTHLY_SUMMARY = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
+
         // Method to build a Uri for querying an individual trip back
         public static Uri buildTripById(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildTripSummaryByDate(String date) {
+            return CONTENT_CLIENT_MONTHLY_SUMMARY.buildUpon().appendPath(date).build();
         }
 
         public static Uri buildTripClientCheckById(long id) {

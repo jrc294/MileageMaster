@@ -28,6 +28,7 @@ public class TripProvider extends ContentProvider {
     private static final int TRIP = 120;
     private static final int TRIP_BY_ID = 121;
     private static final int TRIP_USING_CLIENT_ID = 122;
+    private static final int TRIP_MONTHLY_SUMMARY = 123;
     private static final int CHARGE_ENTRY = 130;
     private static final int CHARGE_ENTRY_BY_ID = 131;
     private static final int CHARGE_ENTRY_BY_RANGE = 132;
@@ -64,6 +65,7 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP, TRIP);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/#", TRIP_BY_ID);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*" + "/#", TRIP_USING_CLIENT_ID);
+        matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*", TRIP_MONTHLY_SUMMARY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY, CHARGE_ENTRY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/#", CHARGE_ENTRY_BY_ID);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/*", CHARGE_ENTRY_BY_RANGE);
@@ -187,6 +189,16 @@ public class TripProvider extends ContentProvider {
                         null,
                         null,
                         null);
+                break;
+            }
+            case TRIP_MONTHLY_SUMMARY: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "select substr(" + TripContract.TripEntry.COLUMN_DATE_TIME + ",6,2), count(*) from "
+                                + TripContract.TripEntry.TABLE_NAME +
+                                " where "
+                                + TripContract.TripEntry.COLUMN_DATE_TIME +
+                                " >= ? group by substr(" + TripContract.TripEntry.COLUMN_DATE_TIME + ",6,2)",
+                        selectionArgs,null);
                 break;
             }
             case CHARGE_ENTRY_BY_ID: {

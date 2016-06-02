@@ -95,7 +95,6 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
     private static final String ADHOC_CHARGE_2 = "adhoc_charge_2";
     private static final String ADHOC_CHARGE_3 = "adhoc_charge_3";
     private static final String TAX = "tax";
-    private static final String STANDARD_CHARGE_DATA = "standard_charge_data";
     private static final String DATE_FORMAT = "dd-MMM-yyyy";
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd kk:mm:ss";
     private static final String TIME_FORMAT = "HH:mm";
