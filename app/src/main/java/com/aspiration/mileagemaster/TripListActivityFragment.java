@@ -183,6 +183,7 @@ public class TripListActivityFragment extends Fragment implements MasterDetailFr
                     mMileageCharge += data.getDouble(data.getColumnIndex(TripContract.TripEntry.COLUMN_COST));
                 } while (data.moveToNext());
             }
+            ((MainActivity) getActivity()).refreshHomeChart();
         }
 
         if (loader.getId() == CHARGES_LOADER) {

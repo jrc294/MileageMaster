@@ -76,4 +76,5 @@
     <string name="trip_not_saved">The trip failed to save. Please enter start and end locations</string>
     <string name="ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="select_a_trip_to_delete">Please select a trip to delete</string>
+    <string name="total_miles_traveled">Total distance traveled</string>
 </resources>

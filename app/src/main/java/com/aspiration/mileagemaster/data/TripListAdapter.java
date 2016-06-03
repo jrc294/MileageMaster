@@ -99,7 +99,7 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
             // Here I am just highlighting the background
             cv_card_view.setBackgroundColor(Color.LTGRAY);
         }else{
-            cv_card_view.setBackgroundColor(Color.TRANSPARENT);
+            cv_card_view.setBackgroundColor(Color.WHITE);
         }
 
     }

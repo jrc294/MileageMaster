@@ -164,7 +164,7 @@ public class TripProvider extends ContentProvider {
                         selectionArgs,
                         null,
                         null,
-                        TripContract.TripEntry.COLUMN_DATE_TIME);
+                        TripContract.TripEntry.COLUMN_DATE_TIME + " desc");
                 break;
             }
             case TRIP_BY_ID: {
@@ -193,7 +193,7 @@ public class TripProvider extends ContentProvider {
             }
             case TRIP_MONTHLY_SUMMARY: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        "select substr(" + TripContract.TripEntry.COLUMN_DATE_TIME + ",6,2), count(*) from "
+                        "select substr(" + TripContract.TripEntry.COLUMN_DATE_TIME + ",6,2), sum(" + TripContract.TripEntry.COLUMN_DISTANCE + ") from "
                                 + TripContract.TripEntry.TABLE_NAME +
                                 " where "
                                 + TripContract.TripEntry.COLUMN_DATE_TIME +

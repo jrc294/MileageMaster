@@ -25,10 +25,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, TripSearchFragment.Callback,
+public class MainActivity extends AppCompatActivity implements TripSearchFragment.Callback,
         TripActivityFragment.DatePickerFragment.OnDateSelected, DeleteDialogFragment.NoticeDialogListener, TripListAdapter.Callback {
 
-    private TabLayout tabLayout;
     private ViewPager mViewPager;
     Map<Integer, TabFragment> mPageReferenceMap = new HashMap<>();
 
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
             switch (position) {
                 case 0:
-                    tab = HomeFragment.newInstance(null,null); break;
+                    tab = new HomeFragment(); break;
                 case 1:
                     tab = new TripSearchFragment();
                     break;
@@ -267,10 +266,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         myFragment.refresh(data);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     public void setTwoPane(boolean twoPane) {
@@ -301,5 +296,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
 
+    }
+
+    public void refreshHomeChart() {
+        TabFragment home_fragment = (TabFragment) mPageReferenceMap.get(0);
+        if (home_fragment != null) {
+            home_fragment.refresh(null);
+        }
     }
 }
