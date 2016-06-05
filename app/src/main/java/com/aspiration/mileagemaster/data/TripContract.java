@@ -32,11 +32,17 @@ public class TripContract {
 
         public static final String PATH_TRIP_CLIENT = "client";
 
+        public static final String PATH_TRIP_SUMMARY = "summary";
+
+        public static final String PATH_TRIP_DAILY = "daily";
+
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
 
         public static final Uri CONTENT_CLIENT_CHECK_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).appendPath(PATH_TRIP_CLIENT).build();
 
         public static final Uri CONTENT_CLIENT_MONTHLY_SUMMARY = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
+
+        public static final Uri CONTENT_CLIENT_DAILY_SUMMARY = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRIP).build();
 
         // Method to build a Uri for querying an individual trip back
         public static Uri buildTripById(long id) {
@@ -45,6 +51,10 @@ public class TripContract {
 
         public static Uri buildTripSummaryByDate(String date) {
             return CONTENT_CLIENT_MONTHLY_SUMMARY.buildUpon().appendPath(date).build();
+        }
+
+        public static Uri buildTripSummaryForDaily() {
+            return CONTENT_CLIENT_MONTHLY_SUMMARY.buildUpon().appendPath(PATH_TRIP_SUMMARY).appendPath(PATH_TRIP_DAILY).build();
         }
 
         public static Uri buildTripClientCheckById(long id) {

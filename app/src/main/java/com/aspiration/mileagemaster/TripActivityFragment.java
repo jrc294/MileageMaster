@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -76,6 +77,7 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
 
 
 
+    public static final String ACTION_DATA_UPDATED = "com.aspiration.mileagemaster.ACTION_DATA_UPDATED";
     private static final int TRIP_CLIENT_LOADER = 10;
     private static final int TRIP_CHARGE_LOADER = 11;
     private static final int TRIP_LOADER = 12;
@@ -343,6 +345,8 @@ public class TripActivityFragment extends Fragment implements BackFragment, Load
             } else {
                 Toast.makeText(getActivity(), getString(R.string.trip_not_saved), Toast.LENGTH_SHORT).show();
             }
+            Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+            getContext().sendBroadcast(dataUpdatedIntent);
         }
     }
 

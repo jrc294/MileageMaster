@@ -77,4 +77,10 @@
     <string name="ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="select_a_trip_to_delete">Please select a trip to delete</string>
     <string name="total_miles_traveled">Total distance traveled</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="Summary">Todays Totals</string>
+    <string name="trips_today">Trips</string>
+    <string name="distance_today">Distance</string>
+    <string name="charges_today">Charges</string>
 </resources>

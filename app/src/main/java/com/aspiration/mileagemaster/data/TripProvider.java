@@ -29,6 +29,7 @@ public class TripProvider extends ContentProvider {
     private static final int TRIP_BY_ID = 121;
     private static final int TRIP_USING_CLIENT_ID = 122;
     private static final int TRIP_MONTHLY_SUMMARY = 123;
+    private static final int TRIP_DAILY_SUMMARY = 124;
     private static final int CHARGE_ENTRY = 130;
     private static final int CHARGE_ENTRY_BY_ID = 131;
     private static final int CHARGE_ENTRY_BY_RANGE = 132;
@@ -50,6 +51,8 @@ public class TripProvider extends ContentProvider {
 
     private static final String sTripClientId = TripContract.TripEntry.COLUMN_CLIENT_ID + " = ? ";
 
+    private static final String sTripByDay = TripContract.TripEntry.COLUMN_DATE_TIME + " > ? and " + TripContract.TripEntry.COLUMN_DATE_TIME + " < ?";
+
     private static final String sTripStandardChargeIds = TripContract.TripChargeEntry.COLUMN_STANDARD_CHARGE_ID + " = ? ";
 
 
@@ -66,6 +69,7 @@ public class TripProvider extends ContentProvider {
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/#", TRIP_BY_ID);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*" + "/#", TRIP_USING_CLIENT_ID);
         matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*", TRIP_MONTHLY_SUMMARY);
+        matcher.addURI(authority, TripContract.TripEntry.PATH_TRIP + "/*" + "/*", TRIP_DAILY_SUMMARY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY, CHARGE_ENTRY);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/#", CHARGE_ENTRY_BY_ID);
         matcher.addURI(authority, TripContract.TripChargeEntry.PATH_TRIP_CHARGE_ENTRY + "/*", CHARGE_ENTRY_BY_RANGE);
@@ -199,6 +203,17 @@ public class TripProvider extends ContentProvider {
                                 + TripContract.TripEntry.COLUMN_DATE_TIME +
                                 " >= ? group by substr(" + TripContract.TripEntry.COLUMN_DATE_TIME + ",6,2)",
                         selectionArgs,null);
+                break;
+            }
+            case TRIP_DAILY_SUMMARY: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        TripContract.TripEntry.TABLE_NAME,
+                        projection,
+                        sTripByDay,
+                        selectionArgs,
+                        null,
+                        null,
+                        null);
                 break;
             }
             case CHARGE_ENTRY_BY_ID: {

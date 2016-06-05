@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:text="@string/Summary"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/widget_margin"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/home_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:padding="@dimen/widget_margin"
+        android:background="@android:color/white"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvTripsToday"
+            android:layout_width="wrap_content"
+            android:textColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:text="Trips today = 7"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tvMilesTravelledToday"
+            android:layout_width="wrap_content"
+            android:text="Miles travelled = 70"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:paddingTop="@dimen/widget_margin"
+            android:textColor="@android:color/black"
+            android:layout_weight="0"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tvTotalChargesToday"
+            android:layout_width="match_parent"
+            android:paddingTop="@dimen/widget_margin"
+            android:textColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:text="Total charges = $15.89"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
