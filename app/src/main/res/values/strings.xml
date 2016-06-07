@@ -79,8 +79,15 @@
     <string name="total_miles_traveled">Total distance traveled</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
-    <string name="Summary">Todays Totals</string>
+    <string name="Summary">Today\'s Totals</string>
     <string name="trips_today">Trips</string>
     <string name="distance_today">Distance</string>
     <string name="charges_today">Charges</string>
+    <string name="add_item">Add item</string>
+    <string name="name">Name</string>
+    <string name="notes_section">notes section</string>
+    <string name="charges_section">charges section</string>
+    <string name="journey_section">journey section</string>
+    <string name="client_section">client section</string>
+    <string name="trip_date_section">trip date section</string>
 </resources>

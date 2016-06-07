@@ -98,8 +98,10 @@ public class HomeFragment extends Fragment implements TabFragment {
         xAxis.setDrawAxisLine(false);
         YAxis left = myChart.getAxisLeft();
         left.setEnabled(false);
-        left = myChart.getAxisRight();
         left.setDrawGridLines(false);
+        YAxis right = myChart.getAxisRight();
+        right.setEnabled(false);
+        myChart.setDescription("");
         myChart.setDrawMarkerViews(false);
         myChart.setScaleEnabled(false);
         myChart.setHighlightPerTapEnabled(false);

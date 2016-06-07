@@ -32,5 +32,13 @@ public class MainActivityFragment extends Fragment {
         return viewroot;
     }
 
+    public void hideAd() {
+        mAdView.setVisibility(View.INVISIBLE);
+    }
+
+    public void showAd() {
+        mAdView.setVisibility(View.VISIBLE);
+    }
+
 
 }

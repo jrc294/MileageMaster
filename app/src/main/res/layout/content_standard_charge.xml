@@ -10,14 +10,15 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin_wide"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin_wide"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
         android:layout_height="match_parent">
         <TextView
             android:paddingTop="12dp"
-            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:layout_width="wrap_content"
-            android:text="Name"
+            android:text="@string/name"
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/etChargeName"
@@ -27,7 +28,6 @@
             android:hint="@string/charge_name"/>
         <TextView
             android:paddingTop="12dp"
-            android:paddingLeft="4dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
             android:layout_width="wrap_content"

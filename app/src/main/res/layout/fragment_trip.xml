@@ -5,19 +5,20 @@
     tools:context="com.aspiration.mileagemaster.TripActivityFragment">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin_wide"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin_wide"
         android:paddingTop="?attr/actionBarSize">
         <ImageView
             android:id="@+id/imgCalendar"
             android:src="@mipmap/ic_action_calendar_month"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:contentDescription="@string/trip_date_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <LinearLayout
             android:id="@+id/date_section"
-            android:layout_toRightOf="@+id/imgCalendar"
+            android:layout_toEndOf="@+id/imgCalendar"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="wrap_content">
@@ -46,6 +47,7 @@
         <ImageView
             android:id="@+id/imgClient"
             android:src="@mipmap/ic_action_user"
+            android:contentDescription="@string/client_section"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_below="@+id/space1"
             android:layout_width="wrap_content"
@@ -53,10 +55,11 @@
         <Spinner
             android:id="@+id/spClient"
             android:layout_width="match_parent"
-            android:layout_toRightOf="@+id/imgClient"
+            android:layout_toEndOf="@+id/imgClient"
             android:layout_below="@+id/space1"
             android:hint="@string/client"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingStart="@dimen/activity_horizontal_margin"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_height="wrap_content"/>
         <Space
@@ -67,6 +70,7 @@
         <ImageView
             android:id="@+id/imgLocation"
             android:src="@mipmap/ic_action_location"
+            android:contentDescription="@string/journey_section"
             android:layout_marginTop="@dimen/icon_padding_top"
             android:layout_width="wrap_content"
             android:layout_below="@+id/space2"
@@ -75,13 +79,13 @@
             android:id="@+id/etFrom"
             android:hint="@string/from"
             android:layout_below="@+id/space2"
-            android:layout_toRightOf="@+id/imgLocation"
+            android:layout_toEndOf="@+id/imgLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/etTo"
             android:hint="@string/to"
-            android:layout_toRightOf="@+id/imgLocation"
+            android:layout_toEndOf="@+id/imgLocation"
             android:layout_below="@+id/etFrom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -96,7 +100,7 @@
                 android:id="@+id/etMilesTravelled"
                 android:hint="@string/miles_traveled"
                 android:layout_weight="9"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:maxLines="1"
                 android:maxLength="5"
                 android:inputType="numberDecimal"
@@ -107,7 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_marginStart="16dp"
                 android:maxLines="1"
-                android:gravity="right"
+                android:gravity="end"
                 android:inputType="numberDecimal"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -131,6 +135,7 @@
         <ImageView
             android:id="@+id/imgCharge"
             android:src="@mipmap/ic_action_creditcard"
+            android:contentDescription="@string/charges_section"
             android:layout_marginTop="@dimen/icon_padding_top"
             android:layout_below="@+id/space4"
             android:layout_width="wrap_content"
@@ -206,7 +211,7 @@
                 android:layout_weight="0.9"
                 android:singleLine="true"
                 android:hint="@string/additional_charge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <com.aspiration.mileagemaster.EditTextCurrency
                 android:id="@+id/etCustomerChargeAmount1"
@@ -230,7 +235,7 @@
                 android:layout_weight="0.9"
                 android:singleLine="true"
                 android:hint="@string/additional_charge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <com.aspiration.mileagemaster.EditTextCurrency
                 android:id="@+id/etCustomerChargeAmount2"
@@ -254,7 +259,7 @@
                 android:layout_weight="0.9"
                 android:singleLine="true"
                 android:hint="@string/additional_charge"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <com.aspiration.mileagemaster.EditTextCurrency
                 android:id="@+id/etCustomerChargeAmount3"
@@ -304,11 +309,12 @@
             android:layout_below="@+id/btnTotalCostLabel"
             android:layout_marginTop="@dimen/icon_padding_top"
             android:layout_width="wrap_content"
+            android:contentDescription="@string/notes_section"
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etNotes"
             android:layout_below="@+id/btnTotalCostLabel"
-            android:layout_toRightOf="@+id/imgNotes"
+            android:layout_toEndOf="@+id/imgNotes"
             android:hint="@string/notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements TripSearchFragmen
 
     public static final String KEY_ID = "id";
     private static final int ACTIVITY_SEARCH = 1;
-    private static final String SEARCH_FRAGMENT = "search_fragment";
+    private static final String MAINFRAGMENT_TAG = "main_fragment_tag";
     public boolean mTwoPane;
 
 
@@ -69,7 +69,11 @@ public class MainActivity extends AppCompatActivity implements TripSearchFragmen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.ad_container, new MainActivityFragment(), MAINFRAGMENT_TAG)
+                    .commit();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -226,9 +230,12 @@ public class MainActivity extends AppCompatActivity implements TripSearchFragmen
 
 
     private void setCurrentTab(int current_tab) {
+        ((MainActivityFragment) getSupportFragmentManager().findFragmentByTag(MAINFRAGMENT_TAG)).showAd();
         switch (current_tab) {
             case 0 : mCurrent_tab = Tab.HOME; break;
-            case 1 : mCurrent_tab = Tab.MY_TRIPS; break;
+            case 1 : mCurrent_tab = Tab.MY_TRIPS;
+                ((MainActivityFragment) getSupportFragmentManager().findFragmentByTag(MAINFRAGMENT_TAG)).hideAd();
+                break;
             case 2 : mCurrent_tab = Tab.CLIENTS; break;
             case 3 : mCurrent_tab = Tab.CHARGES; break;
         }
