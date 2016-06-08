@@ -38,6 +38,8 @@ import android.widget.Toast;
 
 import com.aspiration.mileagemaster.data.TripContract;
 import com.aspiration.mileagemaster.data.Util;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
