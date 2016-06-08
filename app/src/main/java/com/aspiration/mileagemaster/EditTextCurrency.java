@@ -43,6 +43,8 @@ public class EditTextCurrency extends EditText {
 	protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
 		if (!focused) {
 			this.formatAmount();
+		} else {
+			this.setText(this.getText().toString().replace(Util.getCurrency(),""));
 		}
 		super.onFocusChanged(focused, direction, previouslyFocusedRect);
 	}

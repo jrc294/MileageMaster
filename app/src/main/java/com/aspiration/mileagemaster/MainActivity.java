@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements TripSearchFragmen
             mSearchFilterOnClient = savedInstanceState.getBoolean(Search.INCLUDE_CLIENT);
         }
         setContentView(R.layout.activity_main);
+
+        ((MileageMasterApplication) getApplication()).startTracking();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

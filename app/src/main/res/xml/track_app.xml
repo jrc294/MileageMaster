@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string name="ga_trackingId">UA-78891674-1</string>
+    <string name="ga_autoActivityTracking">true</string>
+    <screenName name="com.aspiration.mileagemaster.TripSearchFragment">
+        Trip admin
+    </screenName>
+    <screenName name="com.aspiration.mileagemaster.HomeFragment">
+        Dashboard
+    </screenName>
+    <screenName name="com.aspiration.mileagemaster.ClientActivity">
+        Client details
+    </screenName>
+    <screenName name="com.aspiration.mileagemaster.StandardChargeActivity">
+        Standard charge details
+    </screenName>
+    <screenName name="com.aspiration.mileagemaster.SettingsActivity">
+        Search
+    </screenName>
+</resources>
